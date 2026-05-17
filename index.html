@@ -10,6 +10,7 @@
   <title>Quản Lý Công Việc – Phòng Phát Triển Giải Pháp KHDN | VietinBank</title>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <style>
     /* ===== RESET & VARIABLES ===== */
@@ -355,6 +356,64 @@
     .p-mid    { color: var(--gold); font-weight: 600; }
     .p-low    { color: var(--green); font-weight: 500; }
 
+    /* ===== BULK IMPORT ===== */
+    .btn-green {
+      background: var(--green); color: #fff;
+      box-shadow: 0 3px 12px rgba(26,127,90,.3);
+    }
+    .btn-green:hover { background: #15694A; transform: translateY(-1px); }
+
+    .upload-area {
+      border: 2.5px dashed var(--gray-200); border-radius: 14px;
+      padding: 44px 20px; text-align: center; cursor: pointer;
+      background: var(--gray-50); transition: all var(--trans);
+      user-select: none;
+    }
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--red); background: var(--red-light);
+    }
+    .upload-area .up-icon {
+      font-size: 42px; color: var(--gray-200); margin-bottom: 14px;
+      display: block; transition: color var(--trans);
+    }
+    .upload-area:hover .up-icon, .upload-area.dragover .up-icon { color: var(--red); }
+    .upload-area p   { font-size: 15px; font-weight: 600; color: var(--gray-700); margin-bottom: 5px; }
+    .upload-area span { font-size: 12px; color: var(--gray-500); }
+
+    .import-step-row {
+      display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .import-step {
+      flex: 1; min-width: 160px; background: var(--gray-50);
+      border-radius: 12px; padding: 16px; border: 1.5px solid var(--gray-100);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .import-step .snum {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--red); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; margin-top: 1px;
+    }
+    .import-step h4 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .import-step p  { font-size: 12px; color: var(--gray-500); line-height: 1.5; margin: 0; }
+
+    .bulk-progress-bar {
+      height: 8px; background: var(--gray-100); border-radius: 4px;
+      overflow: hidden; margin-top: 12px;
+    }
+    .bulk-progress-fill {
+      height: 100%; background: var(--green); border-radius: 4px;
+      transition: width .3s ease; width: 0%;
+    }
+    .bulk-status { font-size: 13px; font-weight: 600; color: var(--navy); margin-top: 8px; }
+
+    /* Mobile adjustments for import */
+    @media (max-width: 640px) {
+      .import-step-row { gap: 8px; }
+      .upload-area { padding: 32px 16px; }
+      .upload-area .up-icon { font-size: 32px; }
+    }
+
     /* ===== LOADING ===== */
     .spinner {
       display: inline-block; width: 18px; height: 18px;
@@ -572,6 +631,9 @@
     <button class="tab-btn" onclick="showTab('tab-dash')">
       <i class="fa-solid fa-chart-pie"></i> Dashboard
     </button>
+    <button class="tab-btn" onclick="showTab('tab-import')">
+      <i class="fa-solid fa-file-import"></i> Nhập Hàng Loạt
+    </button>
   </div>
 </div>
 
@@ -679,7 +741,7 @@
               <label><i class="fa-solid fa-user-tie"></i> Người Phụ Trách <span class="req">*</span></label>
               <select id="f-owner" name="nguoi_phu_trach" required>
                 <option value="">-- Chọn nhân viên --</option>
-                <option>Lê Anh Quân (Trưởng phòng)</option>
+                <option>Lê Anh Quân (Phó phòng)</option>
                 <option>Trần Thị Mai Anh</option>
                 <option>Lê Văn Hùng</option>
                 <option>Phạm Thị Thu Hà</option>
@@ -936,6 +998,92 @@
 
     </div>
   </div>
+
+  <!-- TAB: NHẬP HÀNG LOẠT -->
+  <div class="tab-panel" id="tab-import">
+
+    <!-- Hướng dẫn 3 bước -->
+    <div class="import-step-row">
+      <div class="import-step">
+        <div class="snum">1</div>
+        <div>
+          <h4>Tải File Mẫu</h4>
+          <p>Tải file Excel mẫu đã có sẵn tiêu đề cột và dữ liệu ví dụ</p>
+        </div>
+      </div>
+      <div class="import-step">
+        <div class="snum">2</div>
+        <div>
+          <h4>Điền Dữ Liệu</h4>
+          <p>Mở file, điền thông tin các công việc (mỗi hàng = 1 công việc)</p>
+        </div>
+      </div>
+      <div class="import-step">
+        <div class="snum">3</div>
+        <div>
+          <h4>Upload &amp; Gửi</h4>
+          <p>Upload file lên, kiểm tra preview rồi nhấn Cập Nhật Hàng Loạt</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card tải mẫu + upload -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-header">
+        <div class="card-icon green"><i class="fa-solid fa-file-excel"></i></div>
+        <div>
+          <div class="card-title">File Excel Mẫu &amp; Upload</div>
+          <div class="card-sub">Tải mẫu → điền dữ liệu → upload để cập nhật hàng loạt</div>
+        </div>
+        <button class="btn btn-green" style="margin-left:auto;flex-shrink:0" onclick="downloadTemplate()">
+          <i class="fa-solid fa-file-arrow-down"></i> Tải File Mẫu
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="upload-area" id="upload-area"
+          onclick="document.getElementById('excel-file-input').click()"
+          ondragover="event.preventDefault();this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="handleFileDrop(event)">
+          <i class="fa-solid fa-cloud-arrow-up up-icon"></i>
+          <p>Nhấn để chọn file hoặc kéo thả vào đây</p>
+          <span>Định dạng .xlsx hoặc .xls</span>
+        </div>
+        <input type="file" id="excel-file-input" accept=".xlsx,.xls"
+          style="display:none" onchange="handleFileUpload(event)" />
+      </div>
+    </div>
+
+    <!-- Card preview (ẩn cho đến khi upload) -->
+    <div class="card" id="import-preview-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon navy"><i class="fa-solid fa-table-list"></i></div>
+        <div>
+          <div class="card-title">Xem Trước Dữ Liệu</div>
+          <div class="card-sub" id="import-preview-sub">0 công việc</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap" id="import-preview-table"></div>
+
+        <!-- Progress bar -->
+        <div id="import-progress-wrap" style="display:none;margin-top:16px">
+          <div class="bulk-progress-bar"><div class="bulk-progress-fill" id="bulk-progress-fill"></div></div>
+          <div class="bulk-status" id="bulk-status-text"></div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-primary" id="btn-bulk-submit" onclick="bulkSubmit()">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Hàng Loạt Lên Google Sheet
+          </button>
+          <button class="btn btn-secondary" onclick="clearImport()">
+            <i class="fa-solid fa-rotate-left"></i> Chọn Lại File
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end tab-import -->
 
 </main>
 
@@ -1201,6 +1349,274 @@ function toast(msg, type='info') {
   el.innerHTML = `<i class="fa-solid ${icons[type]||'fa-info'}"></i> ${msg}`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// BULK IMPORT – Excel → Google Sheet
+// ══════════════════════════════════════════════════════════════
+
+// Định nghĩa cột (key = tên trường gửi lên GAS, label = tiêu đề Excel)
+const IMPORT_COLS = [
+  { key: 'ten_cong_viec',        label: 'Tên Công Việc',         req: true  },
+  { key: 'loai_cong_viec',       label: 'Loại Công Việc',        req: false },
+  { key: 'nhom_san_pham',        label: 'Nhóm Sản Phẩm',         req: false },
+  { key: 'phan_khuc_khach_hang', label: 'Phân Khúc Khách Hàng',  req: false },
+  { key: 'nguoi_phu_trach',      label: 'Người Phụ Trách',       req: true  },
+  { key: 'nguoi_phoi_hop',       label: 'Người Phối Hợp',        req: false },
+  { key: 'uu_tien',              label: 'Ưu Tiên',               req: false },
+  { key: 'trang_thai',           label: 'Trạng Thái',            req: false },
+  { key: 'ngay_bat_dau',         label: 'Ngày Bắt Đầu',          req: false },
+  { key: 'deadline',             label: 'Deadline',              req: false },
+  { key: 'tien_do',              label: 'Tiến Độ (%)',            req: false },
+  { key: 'phong_ban_phoi_hop',   label: 'Phòng Ban Phối Hợp',    req: false },
+  { key: 'khoi_luong',           label: 'Khối Lượng',            req: false },
+  { key: 'mo_ta',                label: 'Mô Tả Công Việc',       req: false },
+  { key: 'ket_qua_du_kien',      label: 'Kết Quả Dự Kiến',       req: false },
+  { key: 'rui_ro',               label: 'Rủi Ro / Vướng Mắc',    req: false },
+  { key: 'nguon_luc',            label: 'Nguồn Lực',             req: false },
+  { key: 'link_tai_lieu',        label: 'Link Tài Liệu',         req: false },
+  { key: 'ghi_chu',              label: 'Ghi Chú',               req: false },
+];
+
+// ── 1. Tải file mẫu ──────────────────────────────────────────
+function downloadTemplate() {
+  if (typeof XLSX === 'undefined') {
+    toast('Thư viện Excel chưa tải xong, vui lòng thử lại sau vài giây.', 'error'); return;
+  }
+  const headers  = IMPORT_COLS.map(c => c.label);
+  const example  = [
+    'Phát triển sản phẩm vay tín chấp SME không TSĐB',
+    'Phát triển sản phẩm mới',
+    'Tín dụng doanh nghiệp',
+    'DN vừa và nhỏ – SME',
+    'Lê Anh Quân (Phó phòng)',
+    'Lê Văn Hùng, Phạm Thị Thu Hà',
+    'Cao',
+    'Đang thực hiện',
+    '01/06/2025',
+    '30/06/2025',
+    '30',
+    'Phòng KHDN vừa và nhỏ',
+    'Lớn (40–160 giờ)',
+    'Xây dựng đề án sản phẩm vay không tài sản đảm bảo cho phân khúc SME',
+    'Đề án sản phẩm, quy trình nghiệp vụ, biểu mẫu',
+    'Thiếu dữ liệu lịch sử tín dụng khách hàng',
+    'Dữ liệu CIC, hỗ trợ từ phòng IT',
+    'https://drive.google.com/...',
+    'Ưu tiên hoàn thành trong Q2/2025',
+  ];
+
+  const ws = XLSX.utils.aoa_to_sheet([headers, example]);
+
+  // Độ rộng cột
+  ws['!cols'] = IMPORT_COLS.map((c, i) =>
+    ({ wch: [13,14,15].includes(i) ? 45 : 22 })
+  );
+
+  // In đậm header
+  headers.forEach((_, i) => {
+    const cell = XLSX.utils.encode_cell({ r: 0, c: i });
+    if (!ws[cell]) return;
+    ws[cell].s = { font: { bold: true }, fill: { fgColor: { rgb: 'C8102E' } },
+                   font: { bold: true, color: { rgb: 'FFFFFF' } } };
+  });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'DS Công Việc');
+  XLSX.writeFile(wb, 'mau_cong_viec_VietinBank.xlsx');
+  toast('✅ Đã tải file mẫu! Mở file, điền dữ liệu rồi upload lên.', 'success');
+}
+
+// ── 2. Xử lý file drop ────────────────────────────────────────
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-area').classList.remove('dragover');
+  const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (file) processExcelFile(file);
+}
+
+// ── 3. Xử lý file input ───────────────────────────────────────
+function handleFileUpload(e) {
+  const file = e.target.files && e.target.files[0];
+  if (file) processExcelFile(file);
+}
+
+// ── 4. Parse Excel ───────────────────────────────────────────
+let importedRows = [];
+
+function processExcelFile(file) {
+  if (typeof XLSX === 'undefined') {
+    toast('Thư viện Excel chưa sẵn sàng, thử lại.', 'error'); return;
+  }
+  if (!file.name.match(/\.(xlsx|xls)$/i)) {
+    toast('Chỉ hỗ trợ file .xlsx hoặc .xls', 'error'); return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const data  = new Uint8Array(ev.target.result);
+      const wb    = XLSX.read(data, { type: 'array', cellDates: true });
+      const ws    = wb.Sheets[wb.SheetNames[0]];
+      const allRows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+      if (!allRows || allRows.length < 2) {
+        toast('File không có dữ liệu hoặc chỉ có tiêu đề.', 'error'); return;
+      }
+
+      // Map header sang index
+      const headerRow = allRows[0].map(h => String(h).trim());
+      const dataRows  = allRows.slice(1).filter(r => r.some(c => String(c).trim() !== ''));
+
+      importedRows = dataRows.map(row => {
+        const obj = {};
+        IMPORT_COLS.forEach((col, fallbackIdx) => {
+          // Tìm cột theo label trước, sau đó theo key, cuối cùng theo vị trí
+          let idx = headerRow.findIndex(h =>
+            h === col.label || h === col.key ||
+            h.toLowerCase() === col.label.toLowerCase()
+          );
+          if (idx < 0) idx = fallbackIdx;
+          let val = (idx >= 0 && idx < row.length) ? row[idx] : '';
+          // Format Date objects từ SheetJS
+          if (val instanceof Date) {
+            val = val.toLocaleDateString('vi-VN');
+          }
+          obj[col.key] = String(val || '').trim();
+        });
+        return obj;
+      });
+
+      renderImportPreview(importedRows);
+    } catch(err) {
+      toast('❌ Lỗi đọc file Excel: ' + err.message, 'error');
+      console.error(err);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+// ── 5. Render preview table ───────────────────────────────────
+function renderImportPreview(rows) {
+  if (!rows.length) { toast('Không tìm thấy dữ liệu hợp lệ trong file.', 'error'); return; }
+
+  const validCount   = rows.filter(r => IMPORT_COLS.filter(c => c.req).every(c => r[c.key])).length;
+  const invalidCount = rows.length - validCount;
+
+  document.getElementById('import-preview-sub').innerHTML =
+    `<strong>${rows.length}</strong> công việc nhận diện &nbsp;·&nbsp; ` +
+    `<span style="color:var(--green)">${validCount} hợp lệ</span>` +
+    (invalidCount ? ` &nbsp;·&nbsp; <span style="color:var(--red)">${invalidCount} thiếu thông tin bắt buộc</span>` : '');
+
+  // Chỉ hiển thị các cột quan trọng trong preview
+  const previewKeys = ['ten_cong_viec','nguoi_phu_trach','loai_cong_viec','uu_tien','trang_thai','ngay_bat_dau','deadline','tien_do'];
+  const previewCols = IMPORT_COLS.filter(c => previewKeys.includes(c.key));
+
+  const html = `<table>
+    <thead><tr>
+      <th>#</th>
+      ${previewCols.map(c => `<th>${c.label}</th>`).join('')}
+      <th>Trạng Thái</th>
+    </tr></thead>
+    <tbody>
+      ${rows.map((r, i) => {
+        const missing = IMPORT_COLS.filter(c => c.req && !r[c.key]);
+        const ok = missing.length === 0;
+        return `<tr style="${!ok ? 'background:#FFF5F5' : ''}">
+          <td style="font-weight:600;color:var(--navy)">${i + 1}</td>
+          ${previewCols.map(c => `<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+            title="${(r[c.key]||'').replace(/"/g,'&quot;')}">${r[c.key] || '<span style="color:var(--gray-200)">–</span>'}</td>`).join('')}
+          <td>${ok
+            ? '<span class="badge green">✓ Hợp lệ</span>'
+            : `<span class="badge red" title="Thiếu: ${missing.map(m=>m.label).join(', ')}">⚠ Thiếu trường bắt buộc</span>`
+          }</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  </table>`;
+
+  document.getElementById('import-preview-table').innerHTML = html;
+  document.getElementById('import-preview-card').style.display = 'block';
+  document.getElementById('import-preview-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  toast(`Đã đọc ${rows.length} dòng từ file Excel. Kiểm tra rồi nhấn Cập Nhật.`, 'info');
+}
+
+// ── 6. Bulk submit ───────────────────────────────────────────
+async function bulkSubmit() {
+  const validRows = importedRows.filter(r =>
+    IMPORT_COLS.filter(c => c.req).every(c => r[c.key])
+  );
+
+  if (!validRows.length) {
+    toast('Không có dòng hợp lệ để gửi. Kiểm tra lại dữ liệu.', 'error'); return;
+  }
+  if (!SCRIPT_URL) {
+    toast('⚠️ Hệ thống chưa được cấu hình URL.', 'error'); return;
+  }
+
+  const btn      = document.getElementById('btn-bulk-submit');
+  const progWrap = document.getElementById('import-progress-wrap');
+  const progFill = document.getElementById('bulk-progress-fill');
+  const statusTx = document.getElementById('bulk-status-text');
+
+  btn.disabled      = true;
+  progWrap.style.display = 'block';
+
+  let ok = 0, fail = 0;
+  const now = new Date();
+
+  for (let i = 0; i < validRows.length; i++) {
+    const pct = Math.round(((i) / validRows.length) * 100);
+    progFill.style.width = pct + '%';
+    statusTx.textContent = `Đang gửi ${i + 1} / ${validRows.length} công việc...`;
+
+    const data = {
+      ...validRows[i],
+      ma_cong_viec:  genTaskId(),
+      ngay_tao:      now.toLocaleDateString('vi-VN'),
+      ngay_cap_nhat: now.toLocaleDateString('vi-VN'),
+      gio_tao:       now.toLocaleTimeString('vi-VN'),
+      notify_email:  'nguyenvietdung.bc@gmail.com',
+      action:        'create',
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST', mode: 'no-cors',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'text/plain' }
+      });
+      ok++;
+    } catch(e) {
+      fail++;
+    }
+
+    // Delay nhỏ để tránh quá tải GAS (tối đa ~300 req/phút)
+    if (i < validRows.length - 1) await new Promise(r => setTimeout(r, 350));
+  }
+
+  progFill.style.width = '100%';
+
+  if (fail === 0) {
+    statusTx.innerHTML = `<span style="color:var(--green)">✅ Hoàn thành! Đã cập nhật ${ok} công việc lên Google Sheet.</span>`;
+    toast(`✅ Đã cập nhật ${ok} công việc lên Google Sheet thành công!`, 'success');
+    setTimeout(() => { progWrap.style.display = 'none'; clearImport(); }, 3000);
+  } else {
+    statusTx.innerHTML = `<span style="color:var(--orange)">⚠️ ${ok} thành công · ${fail} thất bại. Kiểm tra kết nối mạng.</span>`;
+    toast(`⚠️ ${ok} thành công, ${fail} thất bại.`, 'info');
+  }
+
+  btn.disabled = false;
+}
+
+// ── 7. Clear import ───────────────────────────────────────────
+function clearImport() {
+  importedRows = [];
+  const inp = document.getElementById('excel-file-input');
+  if (inp) inp.value = '';
+  document.getElementById('import-preview-card').style.display  = 'none';
+  document.getElementById('import-progress-wrap').style.display = 'none';
+  document.getElementById('bulk-progress-fill').style.width     = '0%';
 }
 </script>
 
