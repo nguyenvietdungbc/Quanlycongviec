@@ -414,6 +414,34 @@
       border-radius: 8px; padding: 10px 14px;
       font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: none;
     }
+    /* Deploy notice */
+    .deploy-notice {
+      display: none;
+      margin-top: 18px;
+      background: #FFFBEA; border: 1.5px solid var(--gold);
+      border-radius: 12px; padding: 16px 20px;
+    }
+    .deploy-notice h4 {
+      font-size: 13px; font-weight: 700; color: #7A5800;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 7px;
+    }
+    .deploy-notice p { font-size: 12.5px; color: #7A5800; margin-bottom: 10px; line-height: 1.6; }
+    .deploy-snippet-wrap {
+      background: var(--navy); border-radius: 8px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+    }
+    .deploy-snippet-wrap code {
+      flex: 1; font-size: 12px; color: #7DD3FC;
+      word-break: break-all; font-family: monospace;
+    }
+    .btn-copy {
+      padding: 5px 12px; background: rgba(255,255,255,.15); color: #fff;
+      border: 1px solid rgba(255,255,255,.25); border-radius: 6px;
+      font-size: 11.5px; cursor: pointer; white-space: nowrap; font-family: inherit;
+      transition: background var(--trans);
+    }
+    .btn-copy:hover { background: rgba(255,255,255,.25); }
+
     /* Change-password section */
     .pwd-section {
       margin-top: 28px; padding-top: 24px;
@@ -939,6 +967,19 @@
           </a>
         </div>
 
+        <!-- Deploy notice – hiện sau khi lưu -->
+        <div class="deploy-notice" id="deploy-notice">
+          <h4><i class="fa-solid fa-triangle-exclamation"></i> Bước tiếp theo để tất cả người dùng sử dụng được</h4>
+          <p>
+            URL vừa lưu chỉ hoạt động trên <strong>trình duyệt này</strong> (localStorage). Để nhân viên trên mọi máy đều dùng được, anh cần nhúng URL vào file <code style="background:rgba(0,0,0,.08);padding:1px 6px;border-radius:4px">index.html</code> rồi push lên GitHub:
+          </p>
+          <p>Tìm dòng <code style="background:rgba(0,0,0,.08);padding:1px 6px;border-radius:4px">const SCRIPT_URL_DEPLOY = '';</code> và thay bằng:</p>
+          <div class="deploy-snippet-wrap">
+            <code id="deploy-snippet"></code>
+            <button class="btn-copy" onclick="copySnippet()"><i class="fa-solid fa-copy"></i> Copy</button>
+          </div>
+        </div>
+
         <!-- Change admin password -->
         <div class="pwd-section">
           <h3><i class="fa-solid fa-key"></i>&nbsp; Đổi Mật Khẩu Admin</h3>
@@ -1018,8 +1059,14 @@ const PWD_KEY      = 'vtb_pm_admin_hash';
 const SESSION_KEY  = 'vtb_pm_admin_session';
 const DEFAULT_PWD  = 'bc17';
 
+// ── URL nhúng cố định – Admin điền vào đây sau khi deploy Apps Script ──
+// Sau khi lưu cấu hình trong tab Cài Đặt, copy URL hiển thị bên dưới
+// vào đây rồi push lên GitHub để tất cả người dùng dùng được.
+const SCRIPT_URL_DEPLOY = '';   // ← ADMIN: dán URL Apps Script vào đây
+
 let cfg        = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-let SCRIPT_URL = cfg.scriptUrl || '';
+// Ưu tiên: URL nhúng sẵn → localStorage admin → rỗng
+let SCRIPT_URL = SCRIPT_URL_DEPLOY || cfg.scriptUrl || '';
 
 // ── Simple hash (djb2 variant, sufficient for UI gating) ─────────────
 function simpleHash(str) {
@@ -1050,6 +1097,12 @@ function updateTabLockUI() {
 function openAdminTab(evt) {
   if (isAdmin()) {
     _activateTab('tab-setup', evt.currentTarget);
+    // Nếu đã có URL lưu sẵn, hiển thị snippet deploy ngay
+    const saved = cfg.scriptUrl || SCRIPT_URL_DEPLOY;
+    if (saved && !SCRIPT_URL_DEPLOY) {
+      document.getElementById('deploy-snippet').textContent = `const SCRIPT_URL_DEPLOY = '${saved}';`;
+      document.getElementById('deploy-notice').style.display = 'block';
+    }
   } else {
     document.getElementById('admin-modal').style.display = 'flex';
     document.getElementById('modal-err').style.display = 'none';
@@ -1125,7 +1178,12 @@ function saveConfig() {
   cfg = { scriptUrl: url, email };
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   SCRIPT_URL = url;
-  toast('✅ Đã lưu cấu hình thành công!', 'success');
+  toast('✅ Đã lưu! Xem hướng dẫn bên dưới để áp dụng cho tất cả người dùng.', 'success');
+
+  // Hiển thị snippet cần nhúng vào file
+  const snippet = `const SCRIPT_URL_DEPLOY = '${url}';`;
+  document.getElementById('deploy-snippet').textContent = snippet;
+  document.getElementById('deploy-notice').style.display = 'block';
 }
 
 function testConnection() {
@@ -1137,6 +1195,19 @@ function testConnection() {
     .then(r => r.json())
     .then(d => toast('🎉 Kết nối thành công! ' + (d.message || ''), 'success'))
     .catch(() => toast('❌ Không kết nối được. Kiểm tra URL và quyền truy cập.', 'error'));
+}
+
+function copySnippet() {
+  const text = document.getElementById('deploy-snippet').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    toast('✅ Đã copy! Dán vào index.html dòng SCRIPT_URL_DEPLOY rồi push GitHub.', 'success');
+  }).catch(() => {
+    // Fallback
+    const el = document.createElement('textarea');
+    el.value = text; document.body.appendChild(el);
+    el.select(); document.execCommand('copy'); document.body.removeChild(el);
+    toast('✅ Đã copy snippet!', 'success');
+  });
 }
 
 // ── On load ───────────────────────────────────────────────────────────
