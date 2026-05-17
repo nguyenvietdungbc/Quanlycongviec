@@ -87,27 +87,50 @@ function doGet(e) {
 // ── POST: Tạo công việc mới ───────────────────────────────────
 function doPost(e) {
   try {
-    // Parse JSON body
     let data = {};
+
+    // Cách 1: JSON trong postData.contents (fetch no-cors + text/plain)
     if (e.postData && e.postData.contents) {
-      data = JSON.parse(e.postData.contents);
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch (parseErr) {
+        // Cách 2: URL-encoded fallback
+        e.postData.contents.split('&').forEach(function(p) {
+          var kv = p.split('=');
+          if (kv[0]) data[decodeURIComponent(kv[0])] = decodeURIComponent(kv[1] || '');
+        });
+      }
     }
 
-    const sheet = getOrCreateSheet();
+    // Cách 3: URL parameters fallback
+    if (Object.keys(data).length === 0 && e.parameter) {
+      data = e.parameter;
+    }
 
-    // Build row theo thứ tự COLUMNS
-    const row = COLUMNS.map(col => data[col] || '');
+    if (!data.ten_cong_viec) {
+      return jsonResponse({ status: 'error', message: 'Thiếu tên công việc' });
+    }
 
+    // Tự sinh mã nếu chưa có
+    if (!data.ma_cong_viec) {
+      var now = new Date();
+      data.ma_cong_viec = 'CV-' +
+        String(now.getFullYear()).slice(-2) +
+        String(now.getMonth() + 1).padStart(2, '0') + '-' +
+        String(Math.floor(Math.random() * 900) + 100);
+    }
+
+    var sheet   = getOrCreateSheet();
+    var row     = COLUMNS.map(function(col) { return data[col] || ''; });
     sheet.appendRow(row);
 
-    // Định dạng hàng mới
-    const lastRow = sheet.getLastRow();
+    var lastRow = sheet.getLastRow();
     formatLastRow(sheet, lastRow);
 
-    // Gửi email thông báo
-    const emailTo = data.notify_email || NOTIFY_EMAIL;
+    var emailTo = data.notify_email || NOTIFY_EMAIL;
     sendNotificationEmail(data, emailTo);
 
+    Logger.log('Task created: ' + data.ma_cong_viec + ' | ' + data.nguoi_phu_trach);
     return jsonResponse({ status: 'ok', result: 'success', id: data.ma_cong_viec });
 
   } catch (err) {
