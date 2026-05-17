@@ -418,33 +418,50 @@
       border-radius: 8px; padding: 10px 14px;
       font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: none;
     }
-    /* Deploy notice */
-    .deploy-notice {
-      display: none;
-      margin-top: 18px;
-      background: #FFFBEA; border: 1.5px solid var(--gold);
-      border-radius: 12px; padding: 16px 20px;
+    /* Publish box */
+    .publish-box {
+      display: none; margin-top: 20px;
+      border-radius: 14px; overflow: hidden;
+      border: 2px solid var(--green); box-shadow: 0 4px 20px rgba(26,127,90,.12);
     }
-    .deploy-notice h4 {
-      font-size: 13px; font-weight: 700; color: #7A5800;
-      margin-bottom: 8px; display: flex; align-items: center; gap: 7px;
+    .publish-box-head {
+      background: var(--green); color: #fff;
+      padding: 14px 20px; display: flex; align-items: center; gap: 10px;
     }
-    .deploy-notice p { font-size: 12.5px; color: #7A5800; margin-bottom: 10px; line-height: 1.6; }
-    .deploy-snippet-wrap {
-      background: var(--navy); border-radius: 8px;
-      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+    .publish-box-head h4 { font-size: 14px; font-weight: 700; margin: 0; }
+    .publish-box-head p  { font-size: 11.5px; color: rgba(255,255,255,.8); margin: 2px 0 0; }
+    .publish-box-body { background: var(--green-lt); padding: 18px 20px; }
+    .publish-steps {
+      display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;
     }
-    .deploy-snippet-wrap code {
-      flex: 1; font-size: 12px; color: #7DD3FC;
-      word-break: break-all; font-family: monospace;
+    .pstep {
+      flex: 1; min-width: 120px;
+      background: #fff; border-radius: 10px; padding: 12px 14px;
+      border: 1.5px solid rgba(26,127,90,.2); text-align: center;
     }
-    .btn-copy {
-      padding: 5px 12px; background: rgba(255,255,255,.15); color: #fff;
-      border: 1px solid rgba(255,255,255,.25); border-radius: 6px;
-      font-size: 11.5px; cursor: pointer; white-space: nowrap; font-family: inherit;
-      transition: background var(--trans);
+    .pstep .num {
+      width: 24px; height: 24px; background: var(--green); color: #fff;
+      border-radius: 50%; font-size: 12px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
     }
-    .btn-copy:hover { background: rgba(255,255,255,.25); }
+    .pstep p { font-size: 11.5px; color: var(--gray-700); font-weight: 500; margin: 0; line-height: 1.4; }
+    .btn-publish {
+      width: 100%; padding: 13px; background: var(--green); color: #fff;
+      border: none; border-radius: 10px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all var(--trans); box-shadow: 0 3px 12px rgba(26,127,90,.3);
+    }
+    .btn-publish:hover { background: #15694A; transform: translateY(-1px); }
+    .publish-note { margin-top: 10px; font-size: 11.5px; color: var(--green); text-align: center; font-weight: 500; }
+    /* Already-deployed badge */
+    .deployed-badge {
+      display: none; align-items: center; gap: 8px;
+      background: var(--green-lt); border: 1.5px solid var(--green);
+      border-radius: 10px; padding: 10px 16px; margin-top: 14px;
+      font-size: 13px; font-weight: 600; color: var(--green);
+    }
 
     /* Change-password section */
     .pwd-section {
@@ -615,10 +632,13 @@
       #cfg-grid .span2 { grid-column: span 1 !important; }
       #pwd-grid { grid-template-columns: 1fr !important; }
       .pwd-section h3 { font-size: 14px; }
-      .deploy-notice { padding: 13px 14px; }
-      .deploy-snippet-wrap { flex-direction: column; align-items: stretch; gap: 8px; }
-      .btn-copy { width: 100%; padding: 9px; text-align: center; min-height: 40px; }
-      .deploy-snippet-wrap code { font-size: 11px; }
+      .publish-box-head { padding: 14px 16px; gap: 10px; }
+      .publish-box-head h4 { font-size: 13px; }
+      .publish-box-body { padding: 14px; }
+      .publish-steps { gap: 8px; }
+      .pstep { padding: 10px; }
+      .btn-publish { font-size: 13px; padding: 12px; }
+      .deployed-badge { font-size: 12px; padding: 10px 14px; }
 
       /* ── Empty state ── */
       .empty-state { padding: 40px 16px; }
@@ -1079,28 +1099,36 @@
           </button>
         </div>
 
+        <!-- Already-deployed badge (shown when URL is baked in) -->
+        <div class="deployed-badge" id="deployed-badge">
+          <i class="fa-solid fa-circle-check" style="font-size:18px"></i>
+          <div>
+            <div>Hệ thống <strong>đã được cấu hình sẵn</strong> — tất cả người dùng có thể dùng ngay.</div>
+            <div style="font-size:11.5px;font-weight:400;margin-top:2px;color:var(--green)">Cập nhật URL mới bên dưới nếu cần thay đổi.</div>
+          </div>
+        </div>
+
         <!-- Setup guide -->
-        <div class="setup-card">
+        <div class="setup-card" style="margin-top:16px">
           <div class="icon"><i class="fa-solid fa-circle-info"></i></div>
           <div>
             <h3>Hướng Dẫn Kết Nối Google Sheet</h3>
             <p>
               1. Mở Google Sheet: <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" style="color:var(--navy);font-weight:600">→ Mở Google Sheet</a><br/>
-              2. Chọn <strong>Extensions → Apps Script</strong> → Dán nội dung file <code>Code.gs</code><br/>
-              3. Nhấn <strong>Deploy → New deployment → Web App</strong><br/>
-              4. Chọn <em>"Execute as: Me"</em> và <em>"Who has access: Anyone"</em><br/>
-              5. Copy URL → Dán vào ô bên dưới → Nhấn <strong>Lưu Cấu Hình</strong>
+              2. Vào <strong>Extensions → Apps Script</strong> → Dán nội dung file <code>Code.gs</code><br/>
+              3. <strong>Deploy → New deployment → Web App</strong> (Execute as: Me / Anyone access)<br/>
+              4. Copy URL được cấp → Dán vào ô bên dưới → <strong>Lưu &amp; Xuất File</strong>
             </p>
           </div>
         </div>
 
         <!-- Config fields -->
-        <div class="form-grid" id="cfg-grid" style="grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="form-grid" id="cfg-grid" style="grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;">
           <div class="field span2">
             <label><i class="fa-solid fa-link"></i> URL Google Apps Script (Web App) <span class="req">*</span></label>
             <input type="url" id="cfg-script-url"
               placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
-            <span class="hint">Sau khi deploy Apps Script, copy URL và dán vào đây</span>
+            <span class="hint">Lấy từ bước Deploy Apps Script</span>
           </div>
           <div class="field">
             <label><i class="fa-solid fa-envelope"></i> Email Nhận Thông Báo</label>
@@ -1112,10 +1140,7 @@
           </div>
         </div>
 
-        <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="saveConfig()">
-            <i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình
-          </button>
+        <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
           <button class="btn btn-secondary" onclick="testConnection()">
             <i class="fa-solid fa-plug-circle-check"></i> Kiểm Tra Kết Nối
           </button>
@@ -1124,16 +1149,26 @@
           </a>
         </div>
 
-        <!-- Deploy notice – hiện sau khi lưu -->
-        <div class="deploy-notice" id="deploy-notice">
-          <h4><i class="fa-solid fa-triangle-exclamation"></i> Bước tiếp theo để tất cả người dùng sử dụng được</h4>
-          <p>
-            URL vừa lưu chỉ hoạt động trên <strong>trình duyệt này</strong> (localStorage). Để nhân viên trên mọi máy đều dùng được, anh cần nhúng URL vào file <code style="background:rgba(0,0,0,.08);padding:1px 6px;border-radius:4px">index.html</code> rồi push lên GitHub:
-          </p>
-          <p>Tìm dòng <code style="background:rgba(0,0,0,.08);padding:1px 6px;border-radius:4px">const SCRIPT_URL_DEPLOY = '';</code> và thay bằng:</p>
-          <div class="deploy-snippet-wrap">
-            <code id="deploy-snippet"></code>
-            <button class="btn-copy" onclick="copySnippet()"><i class="fa-solid fa-copy"></i> Copy</button>
+        <!-- Publish box – hiện sau khi nhập URL -->
+        <div class="publish-box" id="publish-box">
+          <div class="publish-box-head">
+            <i class="fa-solid fa-rocket" style="font-size:22px"></i>
+            <div>
+              <h4>Xuất File &amp; Triển Khai Lên GitHub</h4>
+              <p>Làm 1 lần duy nhất — tất cả người dùng có link đều dùng được ngay</p>
+            </div>
+          </div>
+          <div class="publish-box-body">
+            <div class="publish-steps">
+              <div class="pstep"><div class="num">1</div><p>Nhấn nút bên dưới tải file HTML mới</p></div>
+              <div class="pstep"><div class="num">2</div><p>Thay thế <code>index.html</code> trong repo GitHub</p></div>
+              <div class="pstep"><div class="num">3</div><p>Push lên GitHub — xong! Mọi người dùng được</p></div>
+            </div>
+            <button class="btn-publish" onclick="downloadConfiguredHTML()">
+              <i class="fa-solid fa-file-arrow-down" style="font-size:18px"></i>
+              Tải File index.html Đã Cấu Hình Sẵn
+            </button>
+            <p class="publish-note"><i class="fa-solid fa-shield-check"></i> URL được nhúng vào file — không cần cài đặt lại trên từng máy</p>
           </div>
         </div>
 
@@ -1254,11 +1289,17 @@ function updateTabLockUI() {
 function openAdminTab(evt) {
   if (isAdmin()) {
     _activateTab('tab-setup', evt.currentTarget);
-    // Nếu đã có URL lưu sẵn, hiển thị snippet deploy ngay
-    const saved = cfg.scriptUrl || SCRIPT_URL_DEPLOY;
-    if (saved && !SCRIPT_URL_DEPLOY) {
-      document.getElementById('deploy-snippet').textContent = `const SCRIPT_URL_DEPLOY = '${saved}';`;
-      document.getElementById('deploy-notice').style.display = 'block';
+    // Điền URL vào field nếu chưa có
+    if (!document.getElementById('cfg-script-url').value) {
+      const saved = SCRIPT_URL_DEPLOY || cfg.scriptUrl || '';
+      if (saved) document.getElementById('cfg-script-url').value = saved;
+    }
+    // Hiện badge nếu URL đã được nhúng cứng vào file (tức là đã publish)
+    if (SCRIPT_URL_DEPLOY) {
+      document.getElementById('deployed-badge').style.display = 'flex';
+    } else if (cfg.scriptUrl) {
+      // URL đã lưu trong localStorage nhưng chưa nhúng vào file → nhắc publish
+      showPublishBox();
     }
   } else {
     document.getElementById('admin-modal').style.display = 'flex';
@@ -1335,12 +1376,56 @@ function saveConfig() {
   cfg = { scriptUrl: url, email };
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   SCRIPT_URL = url;
-  toast('✅ Đã lưu! Xem hướng dẫn bên dưới để áp dụng cho tất cả người dùng.', 'success');
+  showPublishBox();
+  toast('✅ Đã lưu! Nhấn nút tải file để triển khai cho tất cả người dùng.', 'success');
+}
 
-  // Hiển thị snippet cần nhúng vào file
-  const snippet = `const SCRIPT_URL_DEPLOY = '${url}';`;
-  document.getElementById('deploy-snippet').textContent = snippet;
-  document.getElementById('deploy-notice').style.display = 'block';
+function showPublishBox() {
+  document.getElementById('publish-box').style.display = 'block';
+  document.getElementById('publish-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+async function downloadConfiguredHTML() {
+  const url   = document.getElementById('cfg-script-url').value.trim() || cfg.scriptUrl || SCRIPT_URL_DEPLOY;
+  const email = document.getElementById('cfg-email').value.trim() || cfg.email || 'nguyenvietdung.bc@gmail.com';
+  if (!url) { toast('Vui lòng nhập URL Apps Script trước', 'error'); return; }
+
+  const btn = document.querySelector('.btn-publish');
+  btn.innerHTML = '<div class="spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Đang tạo file...';
+  btn.disabled = true;
+
+  try {
+    // Lấy source HTML của trang hiện tại
+    let html = document.documentElement.outerHTML;
+
+    // Nhúng URL vào hằng số SCRIPT_URL_DEPLOY
+    html = html.replace(
+      /const SCRIPT_URL_DEPLOY\s*=\s*'[^']*'\s*;/,
+      `const SCRIPT_URL_DEPLOY = '${url}';`
+    );
+    // Nhúng email mặc định
+    html = html.replace(
+      /value="nguyenvietdung\.bc@gmail\.com"/g,
+      `value="${email}"`
+    );
+
+    // Tải xuống
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = 'index.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+
+    toast('✅ Đã tải index.html! Push file này lên GitHub là xong.', 'success');
+  } catch (err) {
+    toast('❌ Lỗi tạo file: ' + err.message, 'error');
+  } finally {
+    btn.innerHTML = '<i class="fa-solid fa-file-arrow-down" style="font-size:18px"></i> Tải File index.html Đã Cấu Hình Sẵn';
+    btn.disabled = false;
+  }
 }
 
 function testConnection() {
@@ -1354,18 +1439,6 @@ function testConnection() {
     .catch(() => toast('❌ Không kết nối được. Kiểm tra URL và quyền truy cập.', 'error'));
 }
 
-function copySnippet() {
-  const text = document.getElementById('deploy-snippet').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    toast('✅ Đã copy! Dán vào index.html dòng SCRIPT_URL_DEPLOY rồi push GitHub.', 'success');
-  }).catch(() => {
-    // Fallback
-    const el = document.createElement('textarea');
-    el.value = text; document.body.appendChild(el);
-    el.select(); document.execCommand('copy'); document.body.removeChild(el);
-    toast('✅ Đã copy snippet!', 'success');
-  });
-}
 
 // ── On load ───────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
