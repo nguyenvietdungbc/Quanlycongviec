@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản Lý Công Việc – Phòng Phát Triển Giải Pháp KHDN | VietinBank</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:       #C8102E;
+      --red-dark:  #9B0C22;
+      --red-light: #F9E5E8;
+      --gold:      #E6A817;
+      --navy:      #1A2E5A;
+      --navy2:     #253A6E;
+      --blue-lt:   #EAF0FB;
+      --green:     #1A7F5A;
+      --green-lt:  #E6F5EE;
+      --orange:    #E8700A;
+      --orange-lt: #FEF3E7;
+      --gray-50:   #F8F9FB;
+      --gray-100:  #EEF0F4;
+      --gray-200:  #D8DCE6;
+      --gray-500:  #7A8499;
+      --gray-700:  #3F475A;
+      --gray-900:  #1C2130;
+      --white:     #FFFFFF;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+      --shadow:    0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+      --radius:    12px;
+      --radius-lg: 20px;
+      --trans:     .2s ease;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background: var(--gray-50);
+      color: var(--gray-900);
+      min-height: 100vh;
+      font-size: 14px;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, var(--red-dark) 100%);
+      padding: 0 28px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .header-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: center; gap: 20px;
+      height: 64px;
+    }
+    .logo-box {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 42px; height: 42px;
+      background: var(--red);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #fff; font-weight: 800;
+      letter-spacing: -1px; border: 2px solid rgba(255,255,255,.3);
+    }
+    .logo-text { color: #fff; }
+    .logo-text .bank { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+    .logo-text .dept { font-size: 11px; color: rgba(255,255,255,.7); font-weight: 400; margin-top: 1px; }
+    .header-spacer { flex: 1; }
+    .header-meta { color: rgba(255,255,255,.7); font-size: 12px; text-align: right; }
+    .header-meta strong { color: #fff; display: block; font-size: 13px; }
+
+    /* ===== HERO STRIP ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+      color: #fff; padding: 28px 28px 0;
+    }
+    .hero-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; align-items: flex-end; gap: 32px; flex-wrap: wrap;
+    }
+    .hero-text h1 { font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .hero-text p { font-size: 13px; color: rgba(255,255,255,.85); max-width: 520px; }
+    .hero-stats {
+      display: flex; gap: 24px; margin-left: auto;
+      padding-bottom: 4px;
+    }
+    .hstat {
+      text-align: center; padding: 12px 20px;
+      background: rgba(255,255,255,.12); border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      min-width: 90px;
+    }
+    .hstat-val { font-size: 26px; font-weight: 800; }
+    .hstat-lbl { font-size: 11px; color: rgba(255,255,255,.75); margin-top: 2px; }
+
+    /* ===== TABS ===== */
+    .tabs-wrapper {
+      background: var(--red);
+      border-top: 1px solid rgba(255,255,255,.2);
+    }
+    .tabs-inner {
+      max-width: 1400px; margin: 0 auto;
+      display: flex; padding: 0 28px;
+    }
+    .tab-btn {
+      padding: 14px 22px;
+      background: transparent; border: none; cursor: pointer;
+      color: rgba(255,255,255,.75); font-size: 13px; font-weight: 600;
+      font-family: inherit;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 3px solid transparent;
+      transition: all var(--trans);
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: #fff; background: rgba(255,255,255,.08); }
+    .tab-btn.active {
+      color: #fff; border-bottom-color: var(--gold);
+      background: rgba(255,255,255,.12);
+    }
+
+    /* ===== MAIN ===== */
+    .main { max-width: 1400px; margin: 0 auto; padding: 28px; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--white); border-radius: var(--radius-lg);
+      box-shadow: var(--shadow); overflow: hidden;
+    }
+    .card-header {
+      padding: 20px 28px 16px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .card-icon.red { background: var(--red-light); color: var(--red); }
+    .card-icon.navy { background: var(--blue-lt); color: var(--navy); }
+    .card-icon.green { background: var(--green-lt); color: var(--green); }
+    .card-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+    .card-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+    .card-body { padding: 28px; }
+
+    /* ===== FORM GRID ===== */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px 24px;
+    }
+    .form-grid .span2 { grid-column: span 2; }
+    .form-grid .span3 { grid-column: span 3; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 12px; font-weight: 600;
+      color: var(--gray-700); letter-spacing: .3px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .field label .req { color: var(--red); }
+    .field input,
+    .field select,
+    .field textarea {
+      padding: 10px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 9px;
+      font-family: inherit; font-size: 13.5px;
+      color: var(--gray-900);
+      background: var(--white);
+      transition: border-color var(--trans), box-shadow var(--trans);
+      outline: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(200,16,46,.1);
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field select { cursor: pointer; }
+    .field .hint { font-size: 11px; color: var(--gray-500); }
+
+    /* Progress slider */
+    .slider-wrap { display: flex; align-items: center; gap: 12px; }
+    .slider-wrap input[type=range] {
+      flex: 1; padding: 0; border: none; box-shadow: none;
+      accent-color: var(--red); height: 6px; cursor: pointer;
+    }
+    .slider-wrap input[type=range]:focus { box-shadow: none; }
+    .slider-val {
+      min-width: 48px; text-align: center; font-weight: 700;
+      color: var(--red); font-size: 14px;
+      background: var(--red-light); border-radius: 8px;
+      padding: 3px 8px;
+    }
+
+    /* Section divider */
+    .section-divider {
+      grid-column: span 3;
+      display: flex; align-items: center; gap: 12px;
+      margin: 4px 0 0;
+    }
+    .section-divider span {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--red);
+      white-space: nowrap;
+    }
+    .section-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: var(--gray-200);
+    }
+
+    /* ===== FORM ACTIONS ===== */
+    .form-actions {
+      display: flex; align-items: center; gap: 12px;
+      padding: 20px 28px 24px; border-top: 1px solid var(--gray-100);
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 11px 24px; border-radius: 10px;
+      font-family: inherit; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; border: none; transition: all var(--trans);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary {
+      background: var(--red); color: #fff;
+      box-shadow: 0 3px 12px rgba(200,16,46,.35);
+    }
+    .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: var(--gray-100); color: var(--gray-700);
+      border: 1.5px solid var(--gray-200);
+    }
+    .btn-secondary:hover { background: var(--gray-200); }
+    .btn-navy {
+      background: var(--navy); color: #fff;
+      box-shadow: 0 3px 12px rgba(26,46,90,.3);
+    }
+    .btn-navy:hover { background: var(--navy2); }
+
+    .form-info {
+      margin-left: auto; font-size: 11.5px; color: var(--gray-500);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      padding: 14px 20px; border-radius: 12px;
+      font-size: 13.5px; font-weight: 600;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(80px); opacity: 0;
+      transition: all .35s cubic-bezier(.34,1.56,.64,1);
+      max-width: 380px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--green); color: #fff; }
+    #toast.error   { background: var(--red);   color: #fff; }
+    #toast.info    { background: var(--navy);  color: #fff; }
+
+    /* ===== DASHBOARD ===== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .kpi {
+      background: var(--white); border-radius: var(--radius);
+      padding: 20px 22px; box-shadow: var(--shadow-sm);
+      border-left: 4px solid transparent;
+      display: flex; flex-direction: column; gap: 4px;
+      transition: box-shadow var(--trans);
+    }
+    .kpi:hover { box-shadow: var(--shadow); }
+    .kpi.red  { border-color: var(--red); }
+    .kpi.navy { border-color: var(--navy); }
+    .kpi.green { border-color: var(--green); }
+    .kpi.gold  { border-color: var(--gold); }
+    .kpi.orange { border-color: var(--orange); }
+    .kpi-label { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+    .kpi-value { font-size: 32px; font-weight: 800; color: var(--gray-900); line-height: 1; }
+    .kpi-sub { font-size: 11px; color: var(--gray-500); }
+
+    /* Task table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 11px 14px; text-align: left;
+      font-size: 11.5px; font-weight: 700; letter-spacing: .4px;
+      text-transform: uppercase; color: var(--gray-500);
+      background: var(--gray-50); white-space: nowrap;
+      border-bottom: 2px solid var(--gray-200);
+    }
+    tbody td {
+      padding: 12px 14px;
+      font-size: 13px; color: var(--gray-700);
+      border-bottom: 1px solid var(--gray-100);
+      vertical-align: middle;
+    }
+    tbody tr:hover td { background: var(--gray-50); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11.5px; font-weight: 600; white-space: nowrap;
+    }
+    .badge.red    { background: var(--red-light);   color: var(--red); }
+    .badge.navy   { background: var(--blue-lt);      color: var(--navy); }
+    .badge.green  { background: var(--green-lt);     color: var(--green); }
+    .badge.gold   { background: #FEF7E0;             color: #A07010; }
+    .badge.orange { background: var(--orange-lt);    color: var(--orange); }
+    .badge.gray   { background: var(--gray-100);     color: var(--gray-500); }
+
+    /* progress bar */
+    .prog-bar { width: 80px; height: 7px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; background: var(--red); border-radius: 4px; transition: width .5s; }
+
+    /* filter row */
+    .filter-row {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      align-items: center; margin-bottom: 16px;
+    }
+    .filter-row input, .filter-row select {
+      padding: 9px 14px; border: 1.5px solid var(--gray-200);
+      border-radius: 9px; font-family: inherit; font-size: 13px;
+      outline: none; background: var(--white);
+      transition: border-color var(--trans);
+    }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--red); }
+    .filter-row input { min-width: 240px; }
+
+    /* ===== PRIORITY COLORS ===== */
+    .p-urgent { color: var(--red); font-weight: 700; }
+    .p-high   { color: var(--orange); font-weight: 600; }
+    .p-mid    { color: var(--gold); font-weight: 600; }
+    .p-low    { color: var(--green); font-weight: 500; }
+
+    /* ===== LOADING ===== */
+    .spinner {
+      display: inline-block; width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== SETUP PANEL ===== */
+    .setup-card {
+      background: var(--blue-lt); border-radius: var(--radius);
+      border: 1.5px solid #C4D4EF;
+      padding: 20px 24px; margin-bottom: 24px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .setup-card .icon { font-size: 22px; color: var(--navy); flex-shrink: 0; margin-top: 2px; }
+    .setup-card h3 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .setup-card p { font-size: 12.5px; color: var(--navy2); line-height: 1.6; }
+    .setup-card code {
+      background: var(--navy); color: #fff;
+      padding: 2px 8px; border-radius: 5px;
+      font-size: 12px; word-break: break-all;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--gray-500);
+    }
+    .empty-state i { font-size: 48px; color: var(--gray-200); margin-bottom: 16px; }
+    .empty-state p { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--gray-700); }
+    .empty-state span { font-size: 13px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+      .form-grid .span3 { grid-column: span 2; }
+      .section-divider { grid-column: span 2; }
+      .hero-stats { display: none; }
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .span2, .form-grid .span3 { grid-column: span 1; }
+      .section-divider { grid-column: span 1; }
+      .main { padding: 16px; }
+      .hero { padding: 16px 16px 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo-box" href="#">
+      <div class="logo-icon">VTB</div>
+      <div class="logo-text">
+        <div class="bank">VietinBank</div>
+        <div class="dept">Phòng Phát Triển Giải Pháp KHDN</div>
+      </div>
+    </a>
+    <div class="header-spacer"></div>
+    <div class="header-meta">
+      <strong id="clock">--:--</strong>
+      <span id="today-date"></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <h1><i class="fa-solid fa-layer-group"></i>&nbsp; Hệ Thống Quản Lý Công Việc</h1>
+      <p>Theo dõi tiến độ, phân công nhiệm vụ và kiểm soát hiệu quả công việc phát triển giải pháp tài chính cho doanh nghiệp.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-val" id="hs-total">–</div><div class="hstat-lbl">Tổng CV</div></div>
+      <div class="hstat"><div class="hstat-val" id="hs-inprog">–</div><div class="hstat-lbl">Đang làm</div></div>
+      <div class="hstat"><div class="hstat-val" id="hs-done">–</div><div class="hstat-lbl">Hoàn thành</div></div>
+      <div class="hstat"><div class="hstat-val" id="hs-due">–</div><div class="hstat-lbl">Quá hạn</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TABS ===== -->
+<div class="tabs-wrapper">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="showTab('tab-new')">
+      <i class="fa-solid fa-plus-circle"></i> Tạo Công Việc
+    </button>
+    <button class="tab-btn" onclick="showTab('tab-list')">
+      <i class="fa-solid fa-list-check"></i> Danh Sách
+    </button>
+    <button class="tab-btn" onclick="showTab('tab-dash')">
+      <i class="fa-solid fa-chart-pie"></i> Dashboard
+    </button>
+    <button class="tab-btn" onclick="showTab('tab-setup')">
+      <i class="fa-solid fa-gear"></i> Cài Đặt
+    </button>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- TAB: TẠO CÔNG VIỆC -->
+  <div class="tab-panel active" id="tab-new">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red"><i class="fa-solid fa-file-circle-plus"></i></div>
+        <div>
+          <div class="card-title">Tạo / Cập Nhật Công Việc</div>
+          <div class="card-sub">Điền đầy đủ thông tin rồi nhấn <strong>Cập Nhật</strong> để lưu vào Google Sheet & gửi email thông báo</div>
+        </div>
+      </div>
+
+      <form id="task-form" onsubmit="submitTask(event)">
+        <div class="card-body">
+          <div class="form-grid">
+
+            <!-- ── THÔNG TIN CHUNG ── -->
+            <div class="section-divider"><span><i class="fa-solid fa-circle-info"></i>&nbsp; Thông Tin Chung</span></div>
+
+            <div class="field span2">
+              <label><i class="fa-solid fa-heading"></i> Tên Công Việc <span class="req">*</span></label>
+              <input type="text" id="f-title" name="ten_cong_viec" placeholder="VD: Xây dựng sản phẩm vay tín chấp SME không TSĐB" required />
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-tag"></i> Loại Công Việc <span class="req">*</span></label>
+              <select id="f-type" name="loai_cong_viec" required>
+                <option value="">-- Chọn loại --</option>
+                <option>Phát triển sản phẩm mới</option>
+                <option>Cải tiến sản phẩm hiện có</option>
+                <option>Nghiên cứu thị trường</option>
+                <option>Xây dựng quy trình nghiệp vụ</option>
+                <option>Xây dựng chính sách tín dụng</option>
+                <option>Triển khai &amp; bàn giao</option>
+                <option>Tư vấn &amp; hỗ trợ khách hàng</option>
+                <option>Đào tạo &amp; phát triển năng lực</option>
+                <option>Báo cáo &amp; phân tích</option>
+                <option>Họp &amp; làm việc nội bộ</option>
+                <option>Công việc khác</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-building"></i> Phân Khúc Khách Hàng <span class="req">*</span></label>
+              <select id="f-segment" name="phan_khuc_khach_hang" required>
+                <option value="">-- Chọn phân khúc --</option>
+                <option>DN lớn – Corporate</option>
+                <option>DN vừa và nhỏ – SME</option>
+                <option>DN siêu nhỏ – Micro Enterprise</option>
+                <option>DN FDI / Liên doanh</option>
+                <option>DN Nhà nước / TCTD</option>
+                <option>Tất cả phân khúc</option>
+                <option>Không áp dụng</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-cubes"></i> Nhóm Sản Phẩm <span class="req">*</span></label>
+              <select id="f-product" name="nhom_san_pham" required>
+                <option value="">-- Chọn nhóm --</option>
+                <option>Tín dụng doanh nghiệp</option>
+                <option>Tài trợ thương mại (Trade Finance)</option>
+                <option>Thanh toán &amp; Cash Management</option>
+                <option>Ngoại hối &amp; Phái sinh</option>
+                <option>Tiền gửi &amp; Đầu tư</option>
+                <option>Bảo lãnh &amp; L/C</option>
+                <option>Ngân hàng số KHDN</option>
+                <option>Gói giải pháp tích hợp</option>
+                <option>Không thuộc sản phẩm cụ thể</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-circle-dot"></i> Mức Độ Ưu Tiên <span class="req">*</span></label>
+              <select id="f-priority" name="uu_tien" required>
+                <option value="">-- Chọn --</option>
+                <option value="Khẩn cấp">🔴 Khẩn cấp</option>
+                <option value="Cao">🟠 Cao</option>
+                <option value="Trung bình" selected>🟡 Trung bình</option>
+                <option value="Thấp">🟢 Thấp</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-circle-half-stroke"></i> Trạng Thái <span class="req">*</span></label>
+              <select id="f-status" name="trang_thai" required>
+                <option value="Chưa bắt đầu" selected>⬜ Chưa bắt đầu</option>
+                <option value="Đang thực hiện">🔵 Đang thực hiện</option>
+                <option value="Chờ phê duyệt">🟡 Chờ phê duyệt</option>
+                <option value="Tạm dừng">⏸️ Tạm dừng</option>
+                <option value="Hoàn thành">✅ Hoàn thành</option>
+                <option value="Hủy bỏ">❌ Hủy bỏ</option>
+              </select>
+            </div>
+
+            <!-- ── NHÂN SỰ ── -->
+            <div class="section-divider"><span><i class="fa-solid fa-users"></i>&nbsp; Phân Công Nhân Sự</span></div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-user-tie"></i> Người Phụ Trách <span class="req">*</span></label>
+              <select id="f-owner" name="nguoi_phu_trach" required>
+                <option value="">-- Chọn nhân viên --</option>
+                <option>Nguyễn Việt Dũng (Trưởng phòng)</option>
+                <option>Trần Thị Mai Anh</option>
+                <option>Lê Văn Hùng</option>
+                <option>Phạm Thị Thu Hà</option>
+                <option>Nguyễn Đức Minh</option>
+                <option>Vũ Thị Lan</option>
+                <option>Đặng Văn Trung</option>
+                <option>Hoàng Thị Thảo</option>
+                <option>Bùi Văn Nam</option>
+                <option>Trịnh Thị Hương</option>
+                <option>Lý Văn Tùng</option>
+                <option>Ngô Thị Bích</option>
+                <option>Đinh Văn Quang</option>
+                <option>Phan Thị Ngọc</option>
+                <option>Cao Văn Đức</option>
+                <option>Dương Thị Linh</option>
+                <option>Trương Văn Khoa</option>
+                <option>Mai Thị Thu</option>
+                <option>Lưu Văn Phúc</option>
+                <option>Hà Thị Kim Oanh</option>
+              </select>
+            </div>
+
+            <div class="field span2">
+              <label><i class="fa-solid fa-user-group"></i> Người Phối Hợp</label>
+              <input type="text" id="f-collab" name="nguoi_phoi_hop" placeholder="VD: Lê Văn Hùng, Phạm Thị Thu Hà" />
+              <span class="hint">Nhập tên cách nhau bằng dấu phẩy</span>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-user-check"></i> Người Phê Duyệt</label>
+              <input type="text" id="f-approver" name="nguoi_phe_duyet" placeholder="VD: GĐ Chi nhánh / Phó GĐ" />
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-link"></i> Phòng Ban Phối Hợp</label>
+              <select id="f-dept" name="phong_ban_phoi_hop">
+                <option value="">-- Không có --</option>
+                <option>Phòng KHDN lớn</option>
+                <option>Phòng KHDN vừa và nhỏ</option>
+                <option>Phòng Quản lý Rủi ro</option>
+                <option>Phòng Pháp chế &amp; Tuân thủ</option>
+                <option>Phòng Công nghệ thông tin</option>
+                <option>Phòng Kế toán &amp; Tài chính</option>
+                <option>Ban Chiến lược</option>
+                <option>Trung tâm Kinh doanh</option>
+                <option>Nhiều phòng ban</option>
+              </select>
+            </div>
+
+            <!-- ── THỜI GIAN ── -->
+            <div class="section-divider"><span><i class="fa-solid fa-calendar"></i>&nbsp; Thời Gian &amp; Tiến Độ</span></div>
+
+            <div class="field">
+              <label><i class="fa-regular fa-calendar-plus"></i> Ngày Bắt Đầu <span class="req">*</span></label>
+              <input type="date" id="f-start" name="ngay_bat_dau" required />
+            </div>
+
+            <div class="field">
+              <label><i class="fa-regular fa-calendar-xmark"></i> Deadline <span class="req">*</span></label>
+              <input type="date" id="f-deadline" name="deadline" required />
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-hourglass-half"></i> Khối Lượng Ước Tính</label>
+              <select id="f-effort" name="khoi_luong">
+                <option value="">-- Chọn --</option>
+                <option>Nhỏ (&lt; 8 giờ)</option>
+                <option>Trung bình (8–40 giờ)</option>
+                <option>Lớn (40–160 giờ)</option>
+                <option>Rất lớn (&gt; 160 giờ)</option>
+              </select>
+            </div>
+
+            <div class="field span3">
+              <label><i class="fa-solid fa-percent"></i> Tiến Độ Hoàn Thành</label>
+              <div class="slider-wrap">
+                <input type="range" id="f-progress" name="tien_do" min="0" max="100" value="0"
+                  oninput="document.getElementById('prog-val').textContent=this.value+'%'" />
+                <div class="slider-val" id="prog-val">0%</div>
+              </div>
+            </div>
+
+            <!-- ── NỘI DUNG ── -->
+            <div class="section-divider"><span><i class="fa-solid fa-pen-nib"></i>&nbsp; Nội Dung &amp; Kết Quả</span></div>
+
+            <div class="field span3">
+              <label><i class="fa-solid fa-align-left"></i> Mô Tả Công Việc <span class="req">*</span></label>
+              <textarea id="f-desc" name="mo_ta" rows="4" placeholder="Mô tả chi tiết nội dung công việc cần thực hiện, bối cảnh, yêu cầu đặt ra..." required></textarea>
+            </div>
+
+            <div class="field span2">
+              <label><i class="fa-solid fa-flag-checkered"></i> Kết Quả / Sản Phẩm Dự Kiến (Deliverables)</label>
+              <textarea id="f-deliverable" name="ket_qua_du_kien" rows="3" placeholder="VD: Đề án sản phẩm, quy trình nghiệp vụ, báo cáo phân tích, tài liệu đào tạo..."></textarea>
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-triangle-exclamation"></i> Rủi Ro / Vướng Mắc</label>
+              <textarea id="f-risk" name="rui_ro" rows="3" placeholder="Liệt kê các rủi ro, khó khăn dự kiến gặp phải..."></textarea>
+            </div>
+
+            <div class="field span2">
+              <label><i class="fa-solid fa-screwdriver-wrench"></i> Nguồn Lực Cần Thiết</label>
+              <input type="text" id="f-resource" name="nguon_luc" placeholder="VD: Dữ liệu khách hàng, hỗ trợ IT, ngân sách marketing..." />
+            </div>
+
+            <div class="field">
+              <label><i class="fa-solid fa-link"></i> Link Tài Liệu / File Đính Kèm</label>
+              <input type="url" id="f-link" name="link_tai_lieu" placeholder="https://drive.google.com/..." />
+            </div>
+
+            <div class="field span3">
+              <label><i class="fa-regular fa-comment-dots"></i> Ghi Chú Bổ Sung</label>
+              <textarea id="f-note" name="ghi_chu" rows="2" placeholder="Thông tin thêm, hướng dẫn đặc biệt..."></textarea>
+            </div>
+
+          </div><!-- end form-grid -->
+        </div><!-- end card-body -->
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="btn-submit">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Lên Google Sheet
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetForm()">
+            <i class="fa-solid fa-rotate-left"></i> Xóa Form
+          </button>
+          <div class="form-info">
+            <i class="fa-solid fa-circle-info"></i>
+            Dữ liệu sẽ được lưu vào Google Sheet và gửi email thông báo tới <strong>nguyenvietdung.bc@gmail.com</strong>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB: DANH SÁCH -->
+  <div class="tab-panel" id="tab-list">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon navy"><i class="fa-solid fa-table-list"></i></div>
+        <div>
+          <div class="card-title">Danh Sách Công Việc</div>
+          <div class="card-sub">Tải dữ liệu từ Google Sheet để xem toàn bộ công việc của phòng</div>
+        </div>
+        <button class="btn btn-navy" style="margin-left:auto" onclick="loadTasks()">
+          <i class="fa-solid fa-arrows-rotate"></i> Tải Dữ Liệu
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="filter-row">
+          <input type="text" id="f-search" placeholder="🔍 Tìm kiếm công việc, người phụ trách..." oninput="filterTable()" />
+          <select id="f-filter-status" onchange="filterTable()">
+            <option value="">Tất cả trạng thái</option>
+            <option>Chưa bắt đầu</option>
+            <option>Đang thực hiện</option>
+            <option>Chờ phê duyệt</option>
+            <option>Tạm dừng</option>
+            <option>Hoàn thành</option>
+            <option>Hủy bỏ</option>
+          </select>
+          <select id="f-filter-priority" onchange="filterTable()">
+            <option value="">Tất cả ưu tiên</option>
+            <option>Khẩn cấp</option>
+            <option>Cao</option>
+            <option>Trung bình</option>
+            <option>Thấp</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table id="task-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Mã CV</th>
+                <th>Tên Công Việc</th>
+                <th>Loại</th>
+                <th>Người PT</th>
+                <th>Ưu Tiên</th>
+                <th>Trạng Thái</th>
+                <th>Deadline</th>
+                <th>Tiến Độ</th>
+              </tr>
+            </thead>
+            <tbody id="task-tbody">
+              <tr><td colspan="9"><div class="empty-state">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <p>Chưa có dữ liệu</p>
+                <span>Nhấn "Tải Dữ Liệu" để lấy danh sách công việc từ Google Sheet</span>
+              </div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: DASHBOARD -->
+  <div class="tab-panel" id="tab-dash">
+    <div class="kpi-grid">
+      <div class="kpi red">
+        <div class="kpi-label"><i class="fa-solid fa-list-check"></i> Tổng Công Việc</div>
+        <div class="kpi-value" id="kpi-total">–</div>
+        <div class="kpi-sub">Tất cả bản ghi</div>
+      </div>
+      <div class="kpi navy">
+        <div class="kpi-label"><i class="fa-solid fa-spinner"></i> Đang Thực Hiện</div>
+        <div class="kpi-value" id="kpi-inprog">–</div>
+        <div class="kpi-sub">Công việc đang chạy</div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-label"><i class="fa-solid fa-circle-check"></i> Hoàn Thành</div>
+        <div class="kpi-value" id="kpi-done">–</div>
+        <div class="kpi-sub">Đã nghiệm thu</div>
+      </div>
+      <div class="kpi gold">
+        <div class="kpi-label"><i class="fa-solid fa-clock"></i> Chờ Phê Duyệt</div>
+        <div class="kpi-value" id="kpi-pending">–</div>
+        <div class="kpi-sub">Đang trình lãnh đạo</div>
+      </div>
+      <div class="kpi orange">
+        <div class="kpi-label"><i class="fa-solid fa-triangle-exclamation"></i> Quá Hạn</div>
+        <div class="kpi-value" id="kpi-overdue">–</div>
+        <div class="kpi-sub">Cần xử lý ngay</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; flex-wrap:wrap;">
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon red"><i class="fa-solid fa-chart-bar"></i></div>
+          <div><div class="card-title">Theo Loại Công Việc</div></div>
+          <button class="btn btn-secondary" style="margin-left:auto;padding:7px 14px;font-size:12px" onclick="loadDashboard()">
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+        </div>
+        <div class="card-body" id="chart-by-type">
+          <div class="empty-state" style="padding:30px 0">
+            <i class="fa-solid fa-chart-bar"></i>
+            <p>Chưa có dữ liệu</p><span>Nhấn nút làm mới</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon navy"><i class="fa-solid fa-users"></i></div>
+          <div><div class="card-title">Theo Người Phụ Trách</div></div>
+        </div>
+        <div class="card-body" id="chart-by-person">
+          <div class="empty-state" style="padding:30px 0">
+            <i class="fa-solid fa-users"></i>
+            <p>Chưa có dữ liệu</p><span>Nhấn nút làm mới ở chart bên trái</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB: CÀI ĐẶT -->
+  <div class="tab-panel" id="tab-setup">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red"><i class="fa-solid fa-gear"></i></div>
+        <div>
+          <div class="card-title">Cấu Hình Kết Nối</div>
+          <div class="card-sub">Thiết lập URL Google Apps Script để kết nối với Google Sheet</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="setup-card">
+          <div class="icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div>
+            <h3>Hướng Dẫn Kết Nối Google Sheet</h3>
+            <p>
+              1. Mở Google Sheet: <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" style="color:var(--navy);font-weight:600">→ Mở Google Sheet</a><br/>
+              2. Chọn <strong>Extensions → Apps Script</strong><br/>
+              3. Dán toàn bộ nội dung file <code>Code.gs</code> vào editor<br/>
+              4. Nhấn <strong>Deploy → New deployment → Web App</strong><br/>
+              5. Chọn <em>"Execute as: Me"</em> và <em>"Who has access: Anyone"</em><br/>
+              6. Copy URL được cấp và dán vào ô bên dưới<br/>
+              7. Nhấn <strong>Lưu Cấu Hình</strong>
+            </p>
+          </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="field span2">
+            <label><i class="fa-solid fa-link"></i> URL Google Apps Script (Web App) <span class="req">*</span></label>
+            <input type="url" id="cfg-script-url"
+              placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+              value="" />
+            <span class="hint">Sau khi deploy Apps Script, copy URL ở đây</span>
+          </div>
+          <div class="field">
+            <label><i class="fa-solid fa-envelope"></i> Email Nhận Thông Báo</label>
+            <input type="email" id="cfg-email" value="nguyenvietdung.bc@gmail.com" />
+          </div>
+          <div class="field">
+            <label><i class="fa-brands fa-google"></i> Google Sheet ID</label>
+            <input type="text" id="cfg-sheet-id" value="1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c" readonly style="background:var(--gray-50);color:var(--gray-500)"/>
+          </div>
+        </div>
+
+        <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="saveConfig()">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình
+          </button>
+          <button class="btn btn-secondary" onclick="testConnection()">
+            <i class="fa-solid fa-plug-circle-check"></i> Kiểm Tra Kết Nối
+          </button>
+        </div>
+
+        <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--gray-100);">
+          <h3 style="font-size:15px;color:var(--navy);margin-bottom:12px;"><i class="fa-solid fa-people-group"></i>&nbsp; Quản Lý Danh Sách Nhân Viên</h3>
+          <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Chỉnh sửa trực tiếp trong file index.html, tìm thẻ <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">&lt;!-- Danh sách nhân viên --&gt;</code> hoặc tìm các thẻ <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">&lt;option&gt;</code> trong select <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">f-owner</code></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ── Config ──────────────────────────────────────────────────────────
+const CFG_KEY = 'vtb_pm_config';
+let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+let SCRIPT_URL = cfg.scriptUrl || '';
+const NOTIFY_EMAIL = cfg.email || 'nguyenvietdung.bc@gmail.com';
+
+function saveConfig() {
+  const url = document.getElementById('cfg-script-url').value.trim();
+  const email = document.getElementById('cfg-email').value.trim();
+  if (!url) { toast('Vui lòng nhập URL Apps Script', 'error'); return; }
+  cfg = { scriptUrl: url, email };
+  localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+  SCRIPT_URL = url;
+  toast('Đã lưu cấu hình thành công! ✅', 'success');
+}
+
+function testConnection() {
+  const url = document.getElementById('cfg-script-url').value.trim();
+  if (!url) { toast('Vui lòng nhập URL Apps Script trước', 'error'); return; }
+  toast('Đang kiểm tra kết nối...', 'info');
+  fetch(url + '?action=ping')
+    .then(r => r.json())
+    .then(d => toast('Kết nối thành công! 🎉 ' + (d.message || ''), 'success'))
+    .catch(() => toast('Không kết nối được. Kiểm tra URL và quyền truy cập.', 'error'));
+}
+
+// ── On load ──────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Clock
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    document.getElementById('today-date').textContent =
+      now.toLocaleDateString('vi-VN', {weekday:'short', day:'2-digit', month:'2-digit', year:'numeric'});
+  }, 1000);
+
+  // Default dates
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-start').value = today;
+  const d30 = new Date(); d30.setDate(d30.getDate()+30);
+  document.getElementById('f-deadline').value = d30.toISOString().split('T')[0];
+
+  // Load saved config
+  if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
+  if (cfg.email)     document.getElementById('cfg-email').value = cfg.email;
+});
+
+// ── Tabs ─────────────────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (id === 'tab-dash') loadDashboard();
+}
+
+// ── Generate Task ID ──────────────────────────────────────────────────
+function genTaskId() {
+  const now = new Date();
+  const ym = now.getFullYear().toString().slice(-2)
+    + String(now.getMonth()+1).padStart(2,'0');
+  const rand = Math.floor(Math.random()*900)+100;
+  return `CV-${ym}-${rand}`;
+}
+
+// ── Submit Form ───────────────────────────────────────────────────────
+async function submitTask(e) {
+  e.preventDefault();
+
+  if (!SCRIPT_URL) {
+    toast('⚠️ Chưa cấu hình URL Apps Script. Vào tab Cài Đặt để thiết lập.', 'error');
+    showTab('tab-setup');
+    return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Đang gửi...';
+
+  const form = document.getElementById('task-form');
+  const fd = new FormData(form);
+  const data = {};
+  fd.forEach((v, k) => data[k] = v);
+
+  // Add meta
+  data.ma_cong_viec   = genTaskId();
+  data.ngay_tao       = new Date().toLocaleDateString('vi-VN');
+  data.ngay_cap_nhat  = new Date().toLocaleDateString('vi-VN');
+  data.gio_tao        = new Date().toLocaleTimeString('vi-VN');
+  data.notify_email   = cfg.email || NOTIFY_EMAIL;
+  data.action         = 'create';
+
+  try {
+    const resp = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+    const result = await resp.json();
+
+    if (result.status === 'ok' || result.result === 'success') {
+      toast(`✅ Đã lưu công việc ${data.ma_cong_viec} vào Google Sheet và gửi email thông báo!`, 'success');
+      resetForm();
+    } else {
+      toast('❌ Lỗi: ' + (result.message || 'Không xác định'), 'error');
+    }
+  } catch (err) {
+    toast('❌ Lỗi kết nối. Kiểm tra URL Apps Script và kết nối mạng.', 'error');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Lên Google Sheet';
+  }
+}
+
+// ── Reset Form ────────────────────────────────────────────────────────
+function resetForm() {
+  document.getElementById('task-form').reset();
+  document.getElementById('prog-val').textContent = '0%';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-start').value = today;
+  const d30 = new Date(); d30.setDate(d30.getDate()+30);
+  document.getElementById('f-deadline').value = d30.toISOString().split('T')[0];
+}
+
+// ── Load Tasks from Sheet ─────────────────────────────────────────────
+let allTasks = [];
+async function loadTasks() {
+  if (!SCRIPT_URL) {
+    toast('⚠️ Chưa cấu hình URL Apps Script. Vào tab Cài Đặt.', 'error'); return;
+  }
+  toast('Đang tải dữ liệu...', 'info');
+  try {
+    const resp = await fetch(SCRIPT_URL + '?action=list');
+    const data = await resp.json();
+    if (data.rows) {
+      allTasks = data.rows;
+      renderTable(allTasks);
+      updateHeroStats(allTasks);
+      toast(`Tải thành công ${allTasks.length} công việc`, 'success');
+    } else {
+      toast('Không có dữ liệu trả về', 'error');
+    }
+  } catch (err) {
+    toast('Lỗi tải dữ liệu: ' + err.message, 'error');
+  }
+}
+
+function renderTable(rows) {
+  const tbody = document.getElementById('task-tbody');
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state">
+      <i class="fa-solid fa-inbox"></i><p>Không có công việc nào</p>
+      <span>Thay đổi bộ lọc hoặc tạo công việc mới</span></div></td></tr>`;
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  tbody.innerHTML = rows.map((r, i) => {
+    const dl = r[8] ? new Date(r[8]) : null;
+    const overdue = dl && dl < today && r[6] !== 'Hoàn thành' && r[6] !== 'Hủy bỏ';
+    const prog = parseInt(r[12]) || 0;
+    return `<tr>
+      <td>${i+1}</td>
+      <td><span style="font-family:monospace;font-size:12px;color:var(--navy);font-weight:600">${r[0]||''}</span></td>
+      <td style="max-width:260px;font-weight:600;color:var(--gray-900)">${r[1]||''}</td>
+      <td><span class="badge navy">${r[2]||''}</span></td>
+      <td>${r[4]||''}</td>
+      <td>${priorityBadge(r[5])}</td>
+      <td>${statusBadge(r[6])}</td>
+      <td style="${overdue?'color:var(--red);font-weight:700':''}">${r[8]||''} ${overdue?'⚠️':''}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="prog-bar"><div class="prog-fill" style="width:${prog}%"></div></div>
+          <span style="font-size:12px;font-weight:600;color:var(--gray-700)">${prog}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function priorityBadge(p) {
+  const m = {
+    'Khẩn cấp': ['red','🔴'],
+    'Cao': ['orange','🟠'],
+    'Trung bình': ['gold','🟡'],
+    'Thấp': ['green','🟢'],
+  };
+  const [cls, icon] = m[p] || ['gray','⚪'];
+  return `<span class="badge ${cls}">${icon} ${p||''}</span>`;
+}
+function statusBadge(s) {
+  const m = {
+    'Chưa bắt đầu': ['gray','⬜'],
+    'Đang thực hiện': ['navy','🔵'],
+    'Chờ phê duyệt': ['gold','🟡'],
+    'Tạm dừng': ['orange','⏸️'],
+    'Hoàn thành': ['green','✅'],
+    'Hủy bỏ': ['red','❌'],
+  };
+  const [cls, icon] = m[s] || ['gray','•'];
+  return `<span class="badge ${cls}">${icon} ${s||''}</span>`;
+}
+
+function filterTable() {
+  const q   = document.getElementById('f-search').value.toLowerCase();
+  const st  = document.getElementById('f-filter-status').value;
+  const pr  = document.getElementById('f-filter-priority').value;
+  const filtered = allTasks.filter(r => {
+    const text = (r[1]||'') + (r[4]||'') + (r[2]||'');
+    const matchQ  = !q  || text.toLowerCase().includes(q);
+    const matchSt = !st || r[6] === st;
+    const matchPr = !pr || r[5] === pr;
+    return matchQ && matchSt && matchPr;
+  });
+  renderTable(filtered);
+}
+
+// ── Dashboard ─────────────────────────────────────────────────────────
+function updateHeroStats(rows) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  document.getElementById('hs-total').textContent  = rows.length;
+  document.getElementById('kpi-total').textContent = rows.length;
+  const inprog = rows.filter(r => r[6]==='Đang thực hiện').length;
+  document.getElementById('hs-inprog').textContent  = inprog;
+  document.getElementById('kpi-inprog').textContent = inprog;
+  const done = rows.filter(r => r[6]==='Hoàn thành').length;
+  document.getElementById('hs-done').textContent  = done;
+  document.getElementById('kpi-done').textContent = done;
+  const pend = rows.filter(r => r[6]==='Chờ phê duyệt').length;
+  document.getElementById('kpi-pending').textContent = pend;
+  const overdue = rows.filter(r => {
+    const dl = r[8] ? new Date(r[8]) : null;
+    return dl && dl < today && r[6] !== 'Hoàn thành' && r[6] !== 'Hủy bỏ';
+  }).length;
+  document.getElementById('hs-due').textContent    = overdue;
+  document.getElementById('kpi-overdue').textContent = overdue;
+}
+
+async function loadDashboard() {
+  if (!SCRIPT_URL) return;
+  if (allTasks.length === 0) await loadTasks();
+  renderBarChart('chart-by-type', groupBy(allTasks, 2), 'var(--red)');
+  renderBarChart('chart-by-person', groupBy(allTasks, 4), 'var(--navy)');
+}
+
+function groupBy(rows, col) {
+  const m = {};
+  rows.forEach(r => { const k = r[col]||'(Trống)'; m[k] = (m[k]||0)+1; });
+  return Object.entries(m).sort((a,b) => b[1]-a[1]).slice(0, 8);
+}
+
+function renderBarChart(containerId, data, color) {
+  if (!data.length) return;
+  const max = data[0][1];
+  const el = document.getElementById(containerId);
+  el.innerHTML = data.map(([label, count]) => `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div style="min-width:160px;max-width:160px;font-size:12px;color:var(--gray-700);
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${label}">${label}</div>
+      <div style="flex:1;background:var(--gray-100);border-radius:4px;height:20px;overflow:hidden">
+        <div style="width:${(count/max*100).toFixed(0)}%;height:100%;background:${color};
+          border-radius:4px;display:flex;align-items:center;padding-left:8px;
+          font-size:11px;font-weight:700;color:#fff;transition:width .6s">${count}</div>
+      </div>
+      <span style="font-size:12px;font-weight:700;color:var(--gray-700);min-width:24px;text-align:right">${count}</span>
+    </div>`).join('');
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  const icons = { success:'fa-circle-check', error:'fa-circle-xmark', info:'fa-circle-info' };
+  el.className = `${type} show`;
+  el.innerHTML = `<i class="fa-solid ${icons[type]||'fa-info'}"></i> ${msg}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 5000);
+}
+</script>
+
+</body>
+</html>
