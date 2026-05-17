@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#C8102E" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="VTB Task" />
+<html lang="vi"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#C8102E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="VTB Task">
   <title>Quản Lý Công Việc – Phòng Phát Triển Giải Pháp KHDN | VietinBank</title>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
   <style>
     /* ===== RESET & VARIABLES ===== */
@@ -655,8 +653,17 @@
       .kpi-value { font-size: 22px; }
     }
   </style>
-</head>
-<body>
+<style id="monica-reading-highlight-style">
+        .monica-reading-highlight {
+          animation: fadeInOut 1.5s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+          0%, 100% { background-color: transparent; }
+          30%, 70% { background-color: rgba(2, 118, 255, 0.20); }
+        }
+      </style></head>
+<body monica-id="ofpnmcalabcbjgholdjcjblkibolbppb" monica-version="9.0.12">
 
 <!-- ===== HEADER ===== -->
 <header class="header">
@@ -670,8 +677,8 @@
     </a>
     <div class="header-spacer"></div>
     <div class="header-meta">
-      <strong id="clock">--:--</strong>
-      <span id="today-date"></span>
+      <strong id="clock">10:12:38</strong>
+      <span id="today-date">CN, 17/05/2026</span>
     </div>
   </div>
 </header>
@@ -695,7 +702,7 @@
 <!-- ===== TABS ===== -->
 <div class="tabs-wrapper">
   <div class="tabs-inner">
-    <button class="tab-btn active" onclick="showTab('tab-new')">
+    <button class="tab-btn" onclick="showTab('tab-new')">
       <i class="fa-solid fa-plus-circle"></i> Tạo Công Việc
     </button>
     <button class="tab-btn" onclick="showTab('tab-list')">
@@ -704,7 +711,7 @@
     <button class="tab-btn" onclick="showTab('tab-dash')">
       <i class="fa-solid fa-chart-pie"></i> Dashboard
     </button>
-    <button class="tab-btn admin-tab" id="tab-btn-setup" onclick="openAdminTab(event)">
+    <button class="tab-btn admin-tab unlocked active" id="tab-btn-setup" onclick="openAdminTab(event)">
       <i class="fa-solid fa-gear"></i> Cài Đặt
       <i class="fa-solid fa-lock lock-ico"></i>
       <i class="fa-solid fa-unlock unlock-ico"></i>
@@ -716,13 +723,13 @@
 <main class="main">
 
   <!-- TAB: TẠO CÔNG VIỆC -->
-  <div class="tab-panel active" id="tab-new">
+  <div class="tab-panel" id="tab-new">
     <div class="card">
       <div class="card-header">
         <div class="card-icon red"><i class="fa-solid fa-file-circle-plus"></i></div>
         <div>
           <div class="card-title">Tạo / Cập Nhật Công Việc</div>
-          <div class="card-sub">Điền đầy đủ thông tin rồi nhấn <strong>Cập Nhật</strong> để lưu vào Google Sheet & gửi email thông báo</div>
+          <div class="card-sub">Điền đầy đủ thông tin rồi nhấn <strong>Cập Nhật</strong> để lưu vào Google Sheet &amp; gửi email thông báo</div>
         </div>
       </div>
 
@@ -735,12 +742,12 @@
 
             <div class="field span2">
               <label><i class="fa-solid fa-heading"></i> Tên Công Việc <span class="req">*</span></label>
-              <input type="text" id="f-title" name="ten_cong_viec" placeholder="VD: Xây dựng sản phẩm vay tín chấp SME không TSĐB" required />
+              <input type="text" id="f-title" name="ten_cong_viec" placeholder="VD: Xây dựng sản phẩm vay tín chấp SME không TSĐB" required="">
             </div>
 
             <div class="field">
               <label><i class="fa-solid fa-tag"></i> Loại Công Việc <span class="req">*</span></label>
-              <select id="f-type" name="loai_cong_viec" required>
+              <select id="f-type" name="loai_cong_viec" required="">
                 <option value="">-- Chọn loại --</option>
                 <option>Phát triển sản phẩm mới</option>
                 <option>Cải tiến sản phẩm hiện có</option>
@@ -758,7 +765,7 @@
 
             <div class="field">
               <label><i class="fa-solid fa-building"></i> Phân Khúc Khách Hàng <span class="req">*</span></label>
-              <select id="f-segment" name="phan_khuc_khach_hang" required>
+              <select id="f-segment" name="phan_khuc_khach_hang" required="">
                 <option value="">-- Chọn phân khúc --</option>
                 <option>DN lớn – Corporate</option>
                 <option>DN vừa và nhỏ – SME</option>
@@ -772,7 +779,7 @@
 
             <div class="field">
               <label><i class="fa-solid fa-cubes"></i> Nhóm Sản Phẩm <span class="req">*</span></label>
-              <select id="f-product" name="nhom_san_pham" required>
+              <select id="f-product" name="nhom_san_pham" required="">
                 <option value="">-- Chọn nhóm --</option>
                 <option>Tín dụng doanh nghiệp</option>
                 <option>Tài trợ thương mại (Trade Finance)</option>
@@ -788,19 +795,19 @@
 
             <div class="field">
               <label><i class="fa-solid fa-circle-dot"></i> Mức Độ Ưu Tiên <span class="req">*</span></label>
-              <select id="f-priority" name="uu_tien" required>
+              <select id="f-priority" name="uu_tien" required="">
                 <option value="">-- Chọn --</option>
                 <option value="Khẩn cấp">🔴 Khẩn cấp</option>
                 <option value="Cao">🟠 Cao</option>
-                <option value="Trung bình" selected>🟡 Trung bình</option>
+                <option value="Trung bình" selected="">🟡 Trung bình</option>
                 <option value="Thấp">🟢 Thấp</option>
               </select>
             </div>
 
             <div class="field">
               <label><i class="fa-solid fa-circle-half-stroke"></i> Trạng Thái <span class="req">*</span></label>
-              <select id="f-status" name="trang_thai" required>
-                <option value="Chưa bắt đầu" selected>⬜ Chưa bắt đầu</option>
+              <select id="f-status" name="trang_thai" required="">
+                <option value="Chưa bắt đầu" selected="">⬜ Chưa bắt đầu</option>
                 <option value="Đang thực hiện">🔵 Đang thực hiện</option>
                 <option value="Chờ phê duyệt">🟡 Chờ phê duyệt</option>
                 <option value="Tạm dừng">⏸️ Tạm dừng</option>
@@ -814,7 +821,7 @@
 
             <div class="field">
               <label><i class="fa-solid fa-user-tie"></i> Người Phụ Trách <span class="req">*</span></label>
-              <select id="f-owner" name="nguoi_phu_trach" required>
+              <select id="f-owner" name="nguoi_phu_trach" required="">
                 <option value="">-- Chọn nhân viên --</option>
                 <option>Lê Anh Quân (Trưởng phòng)</option>
                 <option>Trần Thị Mai Anh</option>
@@ -841,13 +848,13 @@
 
             <div class="field span2">
               <label><i class="fa-solid fa-user-group"></i> Người Phối Hợp</label>
-              <input type="text" id="f-collab" name="nguoi_phoi_hop" placeholder="VD: Lê Văn Hùng, Phạm Thị Thu Hà" />
+              <input type="text" id="f-collab" name="nguoi_phoi_hop" placeholder="VD: Lê Văn Hùng, Phạm Thị Thu Hà">
               <span class="hint">Nhập tên cách nhau bằng dấu phẩy</span>
             </div>
 
             <div class="field">
               <label><i class="fa-solid fa-user-check"></i> Người Phê Duyệt</label>
-              <input type="text" id="f-approver" name="nguoi_phe_duyet" placeholder="VD: GĐ Chi nhánh / Phó GĐ" />
+              <input type="text" id="f-approver" name="nguoi_phe_duyet" placeholder="VD: GĐ Chi nhánh / Phó GĐ">
             </div>
 
             <div class="field">
@@ -871,12 +878,12 @@
 
             <div class="field">
               <label><i class="fa-regular fa-calendar-plus"></i> Ngày Bắt Đầu <span class="req">*</span></label>
-              <input type="date" id="f-start" name="ngay_bat_dau" required />
+              <input type="date" id="f-start" name="ngay_bat_dau" required="">
             </div>
 
             <div class="field">
               <label><i class="fa-regular fa-calendar-xmark"></i> Deadline <span class="req">*</span></label>
-              <input type="date" id="f-deadline" name="deadline" required />
+              <input type="date" id="f-deadline" name="deadline" required="">
             </div>
 
             <div class="field">
@@ -893,8 +900,7 @@
             <div class="field span3">
               <label><i class="fa-solid fa-percent"></i> Tiến Độ Hoàn Thành</label>
               <div class="slider-wrap">
-                <input type="range" id="f-progress" name="tien_do" min="0" max="100" value="0"
-                  oninput="document.getElementById('prog-val').textContent=this.value+'%'" />
+                <input type="range" id="f-progress" name="tien_do" min="0" max="100" value="0" oninput="document.getElementById('prog-val').textContent=this.value+'%'">
                 <div class="slider-val" id="prog-val">0%</div>
               </div>
             </div>
@@ -904,7 +910,7 @@
 
             <div class="field span3">
               <label><i class="fa-solid fa-align-left"></i> Mô Tả Công Việc <span class="req">*</span></label>
-              <textarea id="f-desc" name="mo_ta" rows="4" placeholder="Mô tả chi tiết nội dung công việc cần thực hiện, bối cảnh, yêu cầu đặt ra..." required></textarea>
+              <textarea id="f-desc" name="mo_ta" rows="4" placeholder="Mô tả chi tiết nội dung công việc cần thực hiện, bối cảnh, yêu cầu đặt ra..." required=""></textarea>
             </div>
 
             <div class="field span2">
@@ -919,12 +925,12 @@
 
             <div class="field span2">
               <label><i class="fa-solid fa-screwdriver-wrench"></i> Nguồn Lực Cần Thiết</label>
-              <input type="text" id="f-resource" name="nguon_luc" placeholder="VD: Dữ liệu khách hàng, hỗ trợ IT, ngân sách marketing..." />
+              <input type="text" id="f-resource" name="nguon_luc" placeholder="VD: Dữ liệu khách hàng, hỗ trợ IT, ngân sách marketing...">
             </div>
 
             <div class="field">
               <label><i class="fa-solid fa-link"></i> Link Tài Liệu / File Đính Kèm</label>
-              <input type="url" id="f-link" name="link_tai_lieu" placeholder="https://drive.google.com/..." />
+              <input type="url" id="f-link" name="link_tai_lieu" placeholder="https://drive.google.com/...">
             </div>
 
             <div class="field span3">
@@ -967,7 +973,7 @@
       </div>
       <div class="card-body">
         <div class="filter-row">
-          <input type="text" id="f-search" placeholder="🔍 Tìm kiếm công việc, người phụ trách..." oninput="filterTable()" />
+          <input type="text" id="f-search" placeholder="🔍 Tìm kiếm công việc, người phụ trách..." oninput="filterTable()">
           <select id="f-filter-status" onchange="filterTable()">
             <option value="">Tất cả trạng thái</option>
             <option>Chưa bắt đầu</option>
@@ -1078,7 +1084,7 @@
   </div>
 
   <!-- TAB: CÀI ĐẶT (Admin only) -->
-  <div class="tab-panel" id="tab-setup">
+  <div class="tab-panel active" id="tab-setup">
     <div class="card">
       <div class="card-header">
         <div class="card-icon red"><i class="fa-solid fa-shield-halved"></i></div>
@@ -1114,9 +1120,9 @@
           <div>
             <h3>Hướng Dẫn Kết Nối Google Sheet</h3>
             <p>
-              1. Mở Google Sheet: <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" style="color:var(--navy);font-weight:600">→ Mở Google Sheet</a><br/>
-              2. Vào <strong>Extensions → Apps Script</strong> → Dán nội dung file <code>Code.gs</code><br/>
-              3. <strong>Deploy → New deployment → Web App</strong> (Execute as: Me / Anyone access)<br/>
+              1. Mở Google Sheet: <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" style="color:var(--navy);font-weight:600">→ Mở Google Sheet</a><br>
+              2. Vào <strong>Extensions → Apps Script</strong> → Dán nội dung file <code>Code.gs</code><br>
+              3. <strong>Deploy → New deployment → Web App</strong> (Execute as: Me / Anyone access)<br>
               4. Copy URL được cấp → Dán vào ô bên dưới → <strong>Lưu &amp; Xuất File</strong>
             </p>
           </div>
@@ -1126,17 +1132,16 @@
         <div class="form-grid" id="cfg-grid" style="grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;">
           <div class="field span2">
             <label><i class="fa-solid fa-link"></i> URL Google Apps Script (Web App) <span class="req">*</span></label>
-            <input type="url" id="cfg-script-url"
-              placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
+            <input type="url" id="cfg-script-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
             <span class="hint">Lấy từ bước Deploy Apps Script</span>
           </div>
           <div class="field">
             <label><i class="fa-solid fa-envelope"></i> Email Nhận Thông Báo</label>
-            <input type="email" id="cfg-email" value="nguyenvietdung.bc@gmail.com" />
+            <input type="email" id="cfg-email" value="nguyenvietdung.bc@gmail.com">
           </div>
           <div class="field">
             <label><i class="fa-brands fa-google"></i> Google Sheet ID</label>
-            <input type="text" id="cfg-sheet-id" value="1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c" readonly style="background:var(--gray-50);color:var(--gray-500)"/>
+            <input type="text" id="cfg-sheet-id" value="1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c" readonly="" style="background:var(--gray-50);color:var(--gray-500)">
           </div>
         </div>
 
@@ -1150,7 +1155,7 @@
         </div>
 
         <!-- Publish box – hiện sau khi nhập URL -->
-        <div class="publish-box" id="publish-box">
+        <div class="publish-box" id="publish-box" style="display: block;">
           <div class="publish-box-head">
             <i class="fa-solid fa-rocket" style="font-size:22px"></i>
             <div>
@@ -1164,10 +1169,7 @@
               <div class="pstep"><div class="num">2</div><p>Thay thế <code>index.html</code> trong repo GitHub</p></div>
               <div class="pstep"><div class="num">3</div><p>Push lên GitHub — xong! Mọi người dùng được</p></div>
             </div>
-            <button class="btn-publish" onclick="downloadConfiguredHTML()">
-              <i class="fa-solid fa-file-arrow-down" style="font-size:18px"></i>
-              Tải File index.html Đã Cấu Hình Sẵn
-            </button>
+            <button class="btn-publish" onclick="downloadConfiguredHTML()" disabled=""><div class="spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff"></div> Đang tạo file...</button>
             <p class="publish-note"><i class="fa-solid fa-shield-check"></i> URL được nhúng vào file — không cần cài đặt lại trên từng máy</p>
           </div>
         </div>
@@ -1178,15 +1180,15 @@
           <div class="form-grid" id="pwd-grid" style="grid-template-columns:1fr 1fr 1fr; gap:14px;">
             <div class="field">
               <label>Mật khẩu hiện tại</label>
-              <input type="password" id="pwd-current" placeholder="Nhập mật khẩu cũ" autocomplete="current-password"/>
+              <input type="password" id="pwd-current" placeholder="Nhập mật khẩu cũ" autocomplete="current-password">
             </div>
             <div class="field">
               <label>Mật khẩu mới <span class="req">*</span></label>
-              <input type="password" id="pwd-new" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password"/>
+              <input type="password" id="pwd-new" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password">
             </div>
             <div class="field">
               <label>Xác nhận mật khẩu mới</label>
-              <input type="password" id="pwd-confirm" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password"/>
+              <input type="password" id="pwd-confirm" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password">
             </div>
           </div>
           <div style="margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -1225,10 +1227,7 @@
       <div class="modal-err" id="modal-err"><i class="fa-solid fa-circle-xmark"></i> &nbsp;<span id="modal-err-msg">Mật khẩu không đúng. Vui lòng thử lại.</span></div>
       <div class="field">
         <label><i class="fa-solid fa-lock"></i> Mật Khẩu Admin</label>
-        <input type="password" id="modal-pwd" placeholder="Nhập mật khẩu..."
-          autocomplete="current-password"
-          onkeydown="if(event.key==='Enter') verifyAdmin()"
-          style="font-size:15px; letter-spacing:2px;" />
+        <input type="password" id="modal-pwd" placeholder="Nhập mật khẩu..." autocomplete="current-password" onkeydown="if(event.key==='Enter') verifyAdmin()" style="font-size:15px; letter-spacing:2px;">
       </div>
     </div>
     <div class="modal-footer">
@@ -1241,7 +1240,7 @@
 </div>
 
 <!-- TOAST -->
-<div id="toast"></div>
+<div id="toast" class="success"><i class="fa-solid fa-circle-check"></i> ✅ Đã tải index.html! Push file này lên GitHub là xong.</div>
 
 <!-- ===== SCRIPTS ===== -->
 <script>
@@ -1254,7 +1253,7 @@ const DEFAULT_PWD  = 'bc17';
 // ── URL nhúng cố định – Admin điền vào đây sau khi deploy Apps Script ──
 // Sau khi lưu cấu hình trong tab Cài Đặt, copy URL hiển thị bên dưới
 // vào đây rồi push lên GitHub để tất cả người dùng dùng được.
-const SCRIPT_URL_DEPLOY = '';   // ← ADMIN: dán URL Apps Script vào đây
+const SCRIPT_URL_DEPLOY = 'https://script.google.com/macros/s/AKfycbwnOE2NR1yu7J0xtiy-_rgavUMa4OU6o1rasF5PFoz9qyR5VBgX_uuKgBl1s-v8gXvW7w/exec';   // ← ADMIN: dán URL Apps Script vào đây
 
 let cfg        = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
 // Ưu tiên: URL nhúng sẵn → localStorage admin → rỗng
@@ -1701,5 +1700,6 @@ function toast(msg, type='info') {
 }
 </script>
 
-</body>
-</html>
+
+
+<div id="monica-content-root" class="monica-widget" style="pointer-events: auto;"></div></body></html>
