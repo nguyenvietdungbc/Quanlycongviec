@@ -385,6 +385,56 @@
     .empty-state p { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--gray-700); }
     .empty-state span { font-size: 13px; }
 
+    /* ===== ADMIN MODAL ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,.55); backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      animation: fadeIn .2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+      background: var(--white); border-radius: var(--radius-lg);
+      width: 100%; max-width: 440px; box-shadow: var(--shadow-lg);
+      overflow: hidden; animation: slideUp .25s cubic-bezier(.34,1.4,.64,1);
+    }
+    @keyframes slideUp { from { transform: translateY(24px); opacity:0; } to { transform: none; opacity:1; } }
+    .modal-hdr {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--red-dark) 100%);
+      padding: 24px 28px; color: #fff;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .modal-hdr .micon { font-size: 26px; }
+    .modal-hdr h2 { font-size: 17px; font-weight: 700; margin: 0 0 3px; }
+    .modal-hdr p  { font-size: 12px; color: rgba(255,255,255,.75); margin: 0; }
+    .modal-body   { padding: 24px 28px 8px; }
+    .modal-footer { padding: 12px 28px 24px; display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-err {
+      background: var(--red-light); color: var(--red);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 12.5px; font-weight: 600; margin-bottom: 14px; display: none;
+    }
+    /* Change-password section */
+    .pwd-section {
+      margin-top: 28px; padding-top: 24px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .pwd-section h3 { font-size: 15px; color: var(--navy); margin-bottom: 14px; font-weight: 700; }
+    /* Admin bar shown in settings when logged in */
+    .admin-bar {
+      background: var(--navy); color: #fff;
+      padding: 11px 18px; border-radius: 10px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 22px; font-size: 13px; flex-wrap: wrap;
+    }
+    .admin-bar strong { color: var(--gold); }
+    .admin-bar .spacer { flex: 1; }
+    /* Lock indicator on tab button */
+    .tab-btn.admin-tab .lock-ico { font-size: 10px; opacity: .65; margin-left: 2px; }
+    .tab-btn.admin-tab.unlocked .lock-ico { display: none; }
+    .tab-btn.admin-tab.unlocked .unlock-ico { display: inline; }
+    .tab-btn.admin-tab .unlock-ico { display: none; font-size: 11px; color: var(--gold); }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 900px) {
       .form-grid { grid-template-columns: repeat(2, 1fr); }
@@ -449,8 +499,10 @@
     <button class="tab-btn" onclick="showTab('tab-dash')">
       <i class="fa-solid fa-chart-pie"></i> Dashboard
     </button>
-    <button class="tab-btn" onclick="showTab('tab-setup')">
+    <button class="tab-btn admin-tab" id="tab-btn-setup" onclick="openAdminTab(event)">
       <i class="fa-solid fa-gear"></i> Cài Đặt
+      <i class="fa-solid fa-lock lock-ico"></i>
+      <i class="fa-solid fa-unlock unlock-ico"></i>
     </button>
   </div>
 </div>
@@ -820,40 +872,50 @@
     </div>
   </div>
 
-  <!-- TAB: CÀI ĐẶT -->
+  <!-- TAB: CÀI ĐẶT (Admin only) -->
   <div class="tab-panel" id="tab-setup">
     <div class="card">
       <div class="card-header">
-        <div class="card-icon red"><i class="fa-solid fa-gear"></i></div>
+        <div class="card-icon red"><i class="fa-solid fa-shield-halved"></i></div>
         <div>
-          <div class="card-title">Cấu Hình Kết Nối</div>
-          <div class="card-sub">Thiết lập URL Google Apps Script để kết nối với Google Sheet</div>
+          <div class="card-title">Cấu Hình Hệ Thống <span style="font-size:12px;color:var(--red);font-weight:600;margin-left:6px">🔐 Admin Only</span></div>
+          <div class="card-sub">Thiết lập kết nối Google Sheet, email thông báo và quản lý mật khẩu admin</div>
         </div>
       </div>
       <div class="card-body">
+
+        <!-- Admin status bar -->
+        <div class="admin-bar">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Đăng nhập với quyền <strong>Quản trị viên</strong></span>
+          <span class="spacer"></span>
+          <button class="btn" style="background:rgba(255,255,255,.15);color:#fff;padding:6px 14px;font-size:12px" onclick="logoutAdmin()">
+            <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+          </button>
+        </div>
+
+        <!-- Setup guide -->
         <div class="setup-card">
           <div class="icon"><i class="fa-solid fa-circle-info"></i></div>
           <div>
             <h3>Hướng Dẫn Kết Nối Google Sheet</h3>
             <p>
               1. Mở Google Sheet: <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" style="color:var(--navy);font-weight:600">→ Mở Google Sheet</a><br/>
-              2. Chọn <strong>Extensions → Apps Script</strong><br/>
-              3. Dán toàn bộ nội dung file <code>Code.gs</code> vào editor<br/>
-              4. Nhấn <strong>Deploy → New deployment → Web App</strong><br/>
-              5. Chọn <em>"Execute as: Me"</em> và <em>"Who has access: Anyone"</em><br/>
-              6. Copy URL được cấp và dán vào ô bên dưới<br/>
-              7. Nhấn <strong>Lưu Cấu Hình</strong>
+              2. Chọn <strong>Extensions → Apps Script</strong> → Dán nội dung file <code>Code.gs</code><br/>
+              3. Nhấn <strong>Deploy → New deployment → Web App</strong><br/>
+              4. Chọn <em>"Execute as: Me"</em> và <em>"Who has access: Anyone"</em><br/>
+              5. Copy URL → Dán vào ô bên dưới → Nhấn <strong>Lưu Cấu Hình</strong>
             </p>
           </div>
         </div>
 
+        <!-- Config fields -->
         <div class="form-grid" style="grid-template-columns:1fr 1fr; gap:16px;">
           <div class="field span2">
             <label><i class="fa-solid fa-link"></i> URL Google Apps Script (Web App) <span class="req">*</span></label>
             <input type="url" id="cfg-script-url"
-              placeholder="https://script.google.com/macros/s/AKfycb.../exec"
-              value="" />
-            <span class="hint">Sau khi deploy Apps Script, copy URL ở đây</span>
+              placeholder="https://script.google.com/macros/s/AKfycb.../exec" />
+            <span class="hint">Sau khi deploy Apps Script, copy URL và dán vào đây</span>
           </div>
           <div class="field">
             <label><i class="fa-solid fa-envelope"></i> Email Nhận Thông Báo</label>
@@ -865,18 +927,50 @@
           </div>
         </div>
 
-        <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="saveConfig()">
             <i class="fa-solid fa-floppy-disk"></i> Lưu Cấu Hình
           </button>
           <button class="btn btn-secondary" onclick="testConnection()">
             <i class="fa-solid fa-plug-circle-check"></i> Kiểm Tra Kết Nối
           </button>
+          <a href="https://docs.google.com/spreadsheets/d/1FkrRG2HPAXnxMgMI_hx7SHiWXXK2rqaBim5uc6NRY_c/edit" target="_blank" class="btn btn-navy">
+            <i class="fa-brands fa-google"></i> Mở Google Sheet
+          </a>
         </div>
 
+        <!-- Change admin password -->
+        <div class="pwd-section">
+          <h3><i class="fa-solid fa-key"></i>&nbsp; Đổi Mật Khẩu Admin</h3>
+          <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <div class="field">
+              <label>Mật khẩu hiện tại</label>
+              <input type="password" id="pwd-current" placeholder="Nhập mật khẩu cũ" autocomplete="current-password"/>
+            </div>
+            <div class="field">
+              <label>Mật khẩu mới <span class="req">*</span></label>
+              <input type="password" id="pwd-new" placeholder="Tối thiểu 6 ký tự" autocomplete="new-password"/>
+            </div>
+            <div class="field">
+              <label>Xác nhận mật khẩu mới</label>
+              <input type="password" id="pwd-confirm" placeholder="Nhập lại mật khẩu mới" autocomplete="new-password"/>
+            </div>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="changeAdminPassword()">
+              <i class="fa-solid fa-lock"></i> Đổi Mật Khẩu
+            </button>
+            <span style="font-size:12px; color:var(--gray-500);">
+              <i class="fa-solid fa-circle-info"></i>
+              Mật khẩu mặc định ban đầu: <code style="background:var(--gray-100);padding:2px 7px;border-radius:5px;font-size:12px">bc17</code>
+            </span>
+          </div>
+        </div>
+
+        <!-- Team info -->
         <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--gray-100);">
-          <h3 style="font-size:15px;color:var(--navy);margin-bottom:12px;"><i class="fa-solid fa-people-group"></i>&nbsp; Quản Lý Danh Sách Nhân Viên</h3>
-          <p style="font-size:13px;color:var(--gray-500);margin-bottom:16px;">Chỉnh sửa trực tiếp trong file index.html, tìm thẻ <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">&lt;!-- Danh sách nhân viên --&gt;</code> hoặc tìm các thẻ <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">&lt;option&gt;</code> trong select <code style="background:var(--gray-100);padding:2px 6px;border-radius:4px;font-size:12px">f-owner</code></p>
+          <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px;"><i class="fa-solid fa-people-group"></i>&nbsp; Cập Nhật Danh Sách Nhân Viên</h3>
+          <p style="font-size:13px;color:var(--gray-500);line-height:1.7;">Mở file <code style="background:var(--gray-100);padding:2px 7px;border-radius:5px">index.html</code>, tìm <code style="background:var(--gray-100);padding:2px 7px;border-radius:5px">id="f-owner"</code> và chỉnh sửa các thẻ <code style="background:var(--gray-100);padding:2px 7px;border-radius:5px">&lt;option&gt;</code>. Sau đó push lên GitHub để áp dụng cho tất cả người dùng.</p>
         </div>
       </div>
     </div>
@@ -884,38 +978,168 @@
 
 </main>
 
+<!-- ===== ADMIN LOGIN MODAL ===== -->
+<div id="admin-modal" class="modal-overlay" style="display:none" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box" id="admin-modal-box">
+    <div class="modal-hdr">
+      <div class="micon"><i class="fa-solid fa-shield-halved"></i></div>
+      <div>
+        <h2>Khu Vực Quản Trị Viên</h2>
+        <p>Nhập mật khẩu admin để tiếp tục</p>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-err" id="modal-err"><i class="fa-solid fa-circle-xmark"></i> &nbsp;<span id="modal-err-msg">Mật khẩu không đúng. Vui lòng thử lại.</span></div>
+      <div class="field">
+        <label><i class="fa-solid fa-lock"></i> Mật Khẩu Admin</label>
+        <input type="password" id="modal-pwd" placeholder="Nhập mật khẩu..."
+          autocomplete="current-password"
+          onkeydown="if(event.key==='Enter') verifyAdmin()"
+          style="font-size:15px; letter-spacing:2px;" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeAdminModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="verifyAdmin()">
+        <i class="fa-solid fa-right-to-bracket"></i> Đăng Nhập
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
 <!-- ===== SCRIPTS ===== -->
 <script>
-// ── Config ──────────────────────────────────────────────────────────
-const CFG_KEY = 'vtb_pm_config';
-let cfg = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
-let SCRIPT_URL = cfg.scriptUrl || '';
-const NOTIFY_EMAIL = cfg.email || 'nguyenvietdung.bc@gmail.com';
+// ── Config & Auth Constants ──────────────────────────────────────────
+const CFG_KEY      = 'vtb_pm_config';
+const PWD_KEY      = 'vtb_pm_admin_hash';
+const SESSION_KEY  = 'vtb_pm_admin_session';
+const DEFAULT_PWD  = 'bc17';
 
+let cfg        = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+let SCRIPT_URL = cfg.scriptUrl || '';
+
+// ── Simple hash (djb2 variant, sufficient for UI gating) ─────────────
+function simpleHash(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
+  return (h >>> 0).toString(36);
+}
+function getStoredHash() {
+  return localStorage.getItem(PWD_KEY) || simpleHash(DEFAULT_PWD);
+}
+
+// ── Admin Session ─────────────────────────────────────────────────────
+function isAdmin() { return sessionStorage.getItem(SESSION_KEY) === '1'; }
+
+function setAdminSession(val) {
+  if (val) sessionStorage.setItem(SESSION_KEY, '1');
+  else     sessionStorage.removeItem(SESSION_KEY);
+}
+
+function updateTabLockUI() {
+  const btn = document.getElementById('tab-btn-setup');
+  if (!btn) return;
+  if (isAdmin()) btn.classList.add('unlocked');
+  else           btn.classList.remove('unlocked');
+}
+
+// ── Admin Modal ───────────────────────────────────────────────────────
+function openAdminTab(evt) {
+  if (isAdmin()) {
+    _activateTab('tab-setup', evt.currentTarget);
+  } else {
+    document.getElementById('admin-modal').style.display = 'flex';
+    document.getElementById('modal-err').style.display = 'none';
+    document.getElementById('modal-pwd').value = '';
+    setTimeout(() => document.getElementById('modal-pwd').focus(), 80);
+  }
+}
+
+function closeAdminModal() {
+  document.getElementById('admin-modal').style.display = 'none';
+}
+
+function closeModalOnBackdrop(e) {
+  if (e.target === document.getElementById('admin-modal')) closeAdminModal();
+}
+
+function verifyAdmin() {
+  const input = document.getElementById('modal-pwd').value;
+  const errEl = document.getElementById('modal-err');
+  if (!input) { showModalErr('Vui lòng nhập mật khẩu.'); return; }
+  if (simpleHash(input) === getStoredHash()) {
+    setAdminSession(true);
+    closeAdminModal();
+    updateTabLockUI();
+    // Load config into fields
+    if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
+    if (cfg.email)     document.getElementById('cfg-email').value = cfg.email;
+    _activateTab('tab-setup', document.getElementById('tab-btn-setup'));
+    toast('✅ Đăng nhập Admin thành công!', 'success');
+  } else {
+    showModalErr('Mật khẩu không đúng. Vui lòng thử lại.');
+    document.getElementById('modal-pwd').value = '';
+    document.getElementById('modal-pwd').focus();
+  }
+}
+
+function showModalErr(msg) {
+  const el = document.getElementById('modal-err');
+  document.getElementById('modal-err-msg').textContent = msg;
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+}
+
+function logoutAdmin() {
+  setAdminSession(false);
+  updateTabLockUI();
+  // Switch to task form tab
+  _activateTab('tab-new', document.querySelector('.tab-btn'));
+  toast('Đã đăng xuất khỏi quyền Admin', 'info');
+}
+
+function changeAdminPassword() {
+  const cur     = document.getElementById('pwd-current').value;
+  const newPwd  = document.getElementById('pwd-new').value;
+  const confirm = document.getElementById('pwd-confirm').value;
+  if (!cur || !newPwd || !confirm) { toast('Vui lòng điền đầy đủ 3 ô mật khẩu', 'error'); return; }
+  if (simpleHash(cur) !== getStoredHash()) { toast('❌ Mật khẩu hiện tại không đúng', 'error'); return; }
+  if (newPwd.length < 6)   { toast('Mật khẩu mới phải có ít nhất 6 ký tự', 'error'); return; }
+  if (newPwd !== confirm)  { toast('❌ Mật khẩu xác nhận không khớp', 'error'); return; }
+  localStorage.setItem(PWD_KEY, simpleHash(newPwd));
+  document.getElementById('pwd-current').value = '';
+  document.getElementById('pwd-new').value     = '';
+  document.getElementById('pwd-confirm').value = '';
+  toast('✅ Đổi mật khẩu admin thành công!', 'success');
+}
+
+// ── Config ────────────────────────────────────────────────────────────
 function saveConfig() {
-  const url = document.getElementById('cfg-script-url').value.trim();
+  if (!isAdmin()) { toast('⛔ Bạn cần đăng nhập Admin để thực hiện', 'error'); return; }
+  const url   = document.getElementById('cfg-script-url').value.trim();
   const email = document.getElementById('cfg-email').value.trim();
   if (!url) { toast('Vui lòng nhập URL Apps Script', 'error'); return; }
   cfg = { scriptUrl: url, email };
   localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
   SCRIPT_URL = url;
-  toast('Đã lưu cấu hình thành công! ✅', 'success');
+  toast('✅ Đã lưu cấu hình thành công!', 'success');
 }
 
 function testConnection() {
+  if (!isAdmin()) return;
   const url = document.getElementById('cfg-script-url').value.trim();
   if (!url) { toast('Vui lòng nhập URL Apps Script trước', 'error'); return; }
   toast('Đang kiểm tra kết nối...', 'info');
   fetch(url + '?action=ping')
     .then(r => r.json())
-    .then(d => toast('Kết nối thành công! 🎉 ' + (d.message || ''), 'success'))
-    .catch(() => toast('Không kết nối được. Kiểm tra URL và quyền truy cập.', 'error'));
+    .then(d => toast('🎉 Kết nối thành công! ' + (d.message || ''), 'success'))
+    .catch(() => toast('❌ Không kết nối được. Kiểm tra URL và quyền truy cập.', 'error'));
 }
 
-// ── On load ──────────────────────────────────────────────────────────
+// ── On load ───────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   // Clock
   setInterval(() => {
@@ -932,18 +1156,25 @@ window.addEventListener('DOMContentLoaded', () => {
   const d30 = new Date(); d30.setDate(d30.getDate()+30);
   document.getElementById('f-deadline').value = d30.toISOString().split('T')[0];
 
-  // Load saved config
-  if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
-  if (cfg.email)     document.getElementById('cfg-email').value = cfg.email;
+  // Restore admin UI state if still in session
+  updateTabLockUI();
+  if (isAdmin() && cfg.scriptUrl) {
+    document.getElementById('cfg-script-url').value = cfg.scriptUrl;
+    if (cfg.email) document.getElementById('cfg-email').value = cfg.email;
+  }
 });
 
-// ── Tabs ─────────────────────────────────────────────────────────────
-function showTab(id) {
+// ── Tabs ──────────────────────────────────────────────────────────────
+function _activateTab(id, btnEl) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  event.currentTarget.classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
   if (id === 'tab-dash') loadDashboard();
+}
+
+function showTab(id) {
+  _activateTab(id, event.currentTarget);
 }
 
 // ── Generate Task ID ──────────────────────────────────────────────────
@@ -960,8 +1191,7 @@ async function submitTask(e) {
   e.preventDefault();
 
   if (!SCRIPT_URL) {
-    toast('⚠️ Chưa cấu hình URL Apps Script. Vào tab Cài Đặt để thiết lập.', 'error');
-    showTab('tab-setup');
+    toast('⚠️ Hệ thống chưa được cấu hình. Vui lòng liên hệ Quản trị viên.', 'error');
     return;
   }
 
@@ -1019,7 +1249,7 @@ function resetForm() {
 let allTasks = [];
 async function loadTasks() {
   if (!SCRIPT_URL) {
-    toast('⚠️ Chưa cấu hình URL Apps Script. Vào tab Cài Đặt.', 'error'); return;
+    toast('⚠️ Hệ thống chưa được cấu hình. Vui lòng liên hệ Quản trị viên.', 'error'); return;
   }
   toast('Đang tải dữ liệu...', 'info');
   try {
